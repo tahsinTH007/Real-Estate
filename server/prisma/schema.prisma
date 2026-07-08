@@ -1,0 +1,30 @@
+generator client {
+    provider        = "prisma-client-js"
+    previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+    provider   = "postgresql"
+    extensions = [postgis]
+}
+
+enum ApplicationStatus {
+    Pending
+    Denied
+    Approved
+}
+
+model Application {
+    id              Int               @id @default(autoincrement())
+    applicationDate DateTime
+    status          ApplicationStatus
+    propertyId      Int
+    tenantCognitoId String
+    name            String
+    email           String
+    phoneNumber     String
+    message         String?
+    leaseId         Int?              @unique
+
+}
+
