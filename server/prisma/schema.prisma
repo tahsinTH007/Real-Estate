@@ -80,6 +80,19 @@ model Property {
     managerCognitoId  String
 
     applications Application[]
+    location     Location      @relation(fields: [locationId], references: [id])
+}
+
+model Location {
+    id          Int                                   @id @default(autoincrement())
+    address     String
+    city        String
+    state       String
+    country     String
+    postalCode  String
+    coordinates Unsupported("geography(Point, 4326)")
+
+    properties Property[]
 }
 
 model Application {
