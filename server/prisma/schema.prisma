@@ -8,10 +8,78 @@ datasource db {
     extensions = [postgis]
 }
 
+enum Highlight {
+    HighSpeedInternetAccess
+    WasherDryer
+    AirConditioning
+    Heating
+    SmokeFree
+    CableReady
+    SatelliteTV
+    DoubleVanities
+    TubShower
+    Intercom
+    SprinklerSystem
+    RecentlyRenovated
+    CloseToTransit
+    GreatView
+    QuietNeighborhood
+}
+
+enum Amenity {
+    WasherDryer
+    AirConditioning
+    Dishwasher
+    HighSpeedInternet
+    HardwoodFloors
+    WalkInClosets
+    Microwave
+    Refrigerator
+    Pool
+    Gym
+    Parking
+    PetsAllowed
+    WiFi
+}
+
+enum PropertyType {
+    Rooms
+    Tinyhouse
+    Apartment
+    Villa
+    Townhouse
+    Cottage
+}
+
 enum ApplicationStatus {
     Pending
     Denied
     Approved
+}
+
+model Property {
+    id                Int          @id @default(autoincrement())
+    name              String
+    description       String
+    pricePerMonth     Float
+    securityDeposit   Float
+    applicationFee    Float
+    photoUrls         String[]
+    amenities         Amenity[]
+    highlights        Highlight[]
+    isPetsAllowed     Boolean      @default(false)
+    isParkingIncluded Boolean      @default(false)
+    beds              Int
+    baths             Float
+    squareFeet        Int
+    propertyType      PropertyType
+    postedDate        DateTime     @default(now())
+    averageRating     Float?       @default(0)
+    numberOfReviews   Int?         @default(0)
+    locationId        Int
+    managerCognitoId  String
+
+    applications Application[]
 }
 
 model Application {
@@ -26,5 +94,5 @@ model Application {
     message         String?
     leaseId         Int?              @unique
 
+    property Property @relation(fields: [propertyId], references: [id])
 }
-
