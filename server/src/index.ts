@@ -6,6 +6,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 
 import applicationRoutes from "./routes/applicationRoutes";
+import propertyRoutes from "./routes/propertyRoutes";
 
 /* CONFIGURATIONS */
 dotenv.config();
@@ -24,6 +25,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/applications", applicationRoutes);
+app.use("/properties", propertyRoutes);
 
 /* SERVER */
 const port = Number(process.env.PORT) || 3002;
