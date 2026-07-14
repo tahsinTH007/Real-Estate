@@ -57,6 +57,13 @@ enum ApplicationStatus {
     Approved
 }
 
+enum PaymentStatus {
+    Pending
+    Paid
+    PartiallyPaid
+    Overdue
+}
+
 model Property {
     id                Int          @id @default(autoincrement())
     name              String
@@ -79,8 +86,35 @@ model Property {
     locationId        Int
     managerCognitoId  String
 
-    applications Application[]
     location     Location      @relation(fields: [locationId], references: [id])
+    manager      Manager       @relation(fields: [managerCognitoId], references: [cognitoId])
+    leases       Lease[]
+    applications Application[]
+    favoritedBy  Tenant[]      @relation("TenantFavorites")
+    tenants      Tenant[]      @relation("TenantProperties")
+}
+
+model Manager {
+    id          Int    @id @default(autoincrement())
+    cognitoId   String @unique
+    name        String
+    email       String
+    phoneNumber String
+
+    managedProperties Property[]
+}
+
+model Tenant {
+    id          Int    @id @default(autoincrement())
+    cognitoId   String @unique
+    name        String
+    email       String
+    phoneNumber String
+
+    properties   Property[]    @relation("TenantProperties")
+    favorites    Property[]    @relation("TenantFavorites")
+    applications Application[]
+    leases       Lease[]
 }
 
 model Location {
@@ -108,4 +142,33 @@ model Application {
     leaseId         Int?              @unique
 
     property Property @relation(fields: [propertyId], references: [id])
+    tenant   Tenant   @relation(fields: [tenantCognitoId], references: [cognitoId])
+    lease    Lease?   @relation(fields: [leaseId], references: [id])
+}
+
+model Lease {
+    id              Int      @id @default(autoincrement())
+    startDate       DateTime
+    endDate         DateTime
+    rent            Float
+    deposit         Float
+    propertyId      Int
+    tenantCognitoId String
+
+    property    Property     @relation(fields: [propertyId], references: [id])
+    tenant      Tenant       @relation(fields: [tenantCognitoId], references: [cognitoId])
+    application Application?
+    payments    Payment[]
+}
+
+model Payment {
+    id            Int           @id @default(autoincrement())
+    amountDue     Float
+    amountPaid    Float
+    dueDate       DateTime
+    paymentDate   DateTime
+    paymentStatus PaymentStatus
+    leaseId       Int
+
+    lease Lease @relation(fields: [leaseId], references: [id])
 }
