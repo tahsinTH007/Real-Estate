@@ -4,11 +4,12 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
-\
+
 import { authMiddleware } from "./middleware/authMiddleware";
 
 import applicationRoutes from "./routes/applicationRoutes";
 import propertyRoutes from "./routes/propertyRoutes";
+import leaseRoutes from "./routes/leaseRoutes";
 import managerRoutes from "./routes/managerRoutes";
 
 /* CONFIGURATIONS */
@@ -31,6 +32,7 @@ app.get("/", (req, res) => {
 
 app.use("/applications", applicationRoutes);
 app.use("/properties", propertyRoutes);
+app.use("/leases", leaseRoutes);
 app.use("/managers", authMiddleware(["manager"]), managerRoutes);
 
 /* SERVER */
