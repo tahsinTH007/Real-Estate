@@ -24,3 +24,27 @@ export const getTenant = async (req: Request, res: Response): Promise<void> => {
       .json({ message: `Error retrieving tenant: ${error.message}` });
   }
 };
+
+export const createTenant = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const { cognitoId, name, email, phoneNumber } = req.body;
+
+    const tenant = await prisma.tenant.create({
+      data: {
+        cognitoId,
+        name,
+        email,
+        phoneNumber,
+      },
+    });
+
+    res.status(201).json(tenant);
+  } catch (error: any) {
+    res
+      .status(500)
+      .json({ message: `Error creating tenant: ${error.message}` });
+  }
+};
