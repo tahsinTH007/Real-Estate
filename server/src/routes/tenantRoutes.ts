@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  addFavoriteProperty,
   createTenant,
   getCurrentResidences,
   getTenant,
@@ -12,5 +13,6 @@ router.get("/:cognitoId", getTenant);
 router.put("/:cognitoId", updateTenant);
 router.post("/", createTenant);
 router.get("/:cognitoId/current-residences", getCurrentResidences);
+router.post("/:cognitoId/favorites/:propertyId", addFavoriteProperty);
 
 export default router;
