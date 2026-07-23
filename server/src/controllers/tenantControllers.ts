@@ -157,3 +157,29 @@ export const addFavoriteProperty = async (
       .json({ message: `Error adding favorite property: ${error.message}` });
   }
 };
+
+export const removeFavoriteProperty = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const { cognitoId, propertyId } = req.params;
+    const propertyIdNumber = Number(propertyId);
+
+    const updatedTenant = await prisma.tenant.update({
+      where: { cognitoId },
+      data: {
+        favorites: {
+          disconnect: { id: propertyIdNumber },
+        },
+      },
+      include: { favorites: true },
+    });
+
+    res.json(updatedTenant);
+  } catch (err: any) {
+    res
+      .status(500)
+      .json({ message: `Error removing favorite property: ${err.message}` });
+  }
+};
