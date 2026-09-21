@@ -246,7 +246,7 @@ export const createProperty = async (
       ...propertyData
     } = req.body;
 
-    const photoUrls = await Promise.all(
+    const uploadedPhotoUrls = await Promise.all(
       files.map(async (file) => {
         const uploadParams = {
           Bucket: process.env.S3_BUCKET_NAME!,
@@ -262,6 +262,9 @@ export const createProperty = async (
 
         return uploadResult.Location;
       }),
+    );
+    const photoUrls = uploadedPhotoUrls.filter(
+      (url): url is string => typeof url === "string",
     );
 
     // Prefer coordinates supplied by the client; otherwise geocode the address.
@@ -327,10 +330,14 @@ export const createProperty = async (
       },
     });
 
+    const propertyWithRelations = newProperty as typeof newProperty & {
+      location: { address: string; city: string; state: string; country: string; postalCode: string };
+    };
+
     res.status(201).json({
       ...newProperty,
       location: {
-        ...newProperty.location,
+        ...propertyWithRelations.location,
         coordinates: { longitude, latitude },
       },
     });

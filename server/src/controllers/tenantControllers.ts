@@ -8,7 +8,7 @@ export const getTenant = async (req: Request, res: Response): Promise<void> => {
   try {
     const { cognitoId } = req.params;
     const tenant = await prisma.tenant.findUnique({
-      where: { cognitoId },
+      where: { cognitoId: String(cognitoId) },
       include: {
         favorites: true,
       },
@@ -59,7 +59,7 @@ export const updateTenant = async (
     const { name, email, phoneNumber } = req.body;
 
     const updateTenant = await prisma.tenant.update({
-      where: { cognitoId },
+      where: { cognitoId: String(cognitoId) },
       data: {
         name,
         email,
@@ -82,14 +82,14 @@ export const getCurrentResidences = async (
   try {
     const { cognitoId } = req.params;
     const properties = await prisma.property.findMany({
-      where: { tenants: { some: { cognitoId } } },
+      where: { tenants: { some: { cognitoId: String(cognitoId) } } },
       include: {
         location: true,
       },
     });
 
     const residencesWithFormattedLocation = await Promise.all(
-      properties.map(async (property) => {
+      properties.map(async (property: any) => {
         const coordinates: { coordinates: string }[] =
           await prisma.$queryRaw`SELECT ST_asText(coordinates) as coordinates from "Location" where id = ${property.location.id}`;
 
@@ -124,10 +124,10 @@ export const addFavoriteProperty = async (
 ): Promise<void> => {
   try {
     const { cognitoId, propertyId } = req.params;
-    const tenant = await prisma.tenant.findUnique({
-      where: { cognitoId },
+    const tenant = (await prisma.tenant.findUnique({
+      where: { cognitoId: String(cognitoId) },
       include: { favorites: true },
-    });
+    })) as any;
 
     if (!tenant) {
       res.status(404).json({ message: "Tenant not found" });
@@ -139,7 +139,7 @@ export const addFavoriteProperty = async (
 
     if (!existingFavorites.some((fav: any) => fav.id === propertyIdNumber)) {
       const updatedTenant = await prisma.tenant.update({
-        where: { cognitoId },
+        where: { cognitoId: String(cognitoId) },
         data: {
           favorites: {
             connect: { id: propertyIdNumber },
@@ -167,7 +167,7 @@ export const removeFavoriteProperty = async (
     const propertyIdNumber = Number(propertyId);
 
     const updatedTenant = await prisma.tenant.update({
-      where: { cognitoId },
+      where: { cognitoId: String(cognitoId) },
       data: {
         favorites: {
           disconnect: { id: propertyIdNumber },
