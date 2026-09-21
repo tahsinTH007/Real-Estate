@@ -5,11 +5,11 @@ const columns = [
   {
     title: "Explore",
     links: [
-      { label: "Los Angeles", href: "/search?location=Los+Angeles%2C+CA&coordinates=-118.2437%2C34.0522" },
-      { label: "San Francisco", href: "/search?location=San+Francisco%2C+CA&coordinates=-122.4194%2C37.7749" },
-      { label: "New York", href: "/search?location=New+York%2C+NY&coordinates=-73.9857%2C40.7484" },
-      { label: "Austin", href: "/search?location=Austin%2C+TX&coordinates=-97.7431%2C30.2672" },
-      { label: "Seattle", href: "/search?location=Seattle%2C+WA&coordinates=-122.3321%2C47.6062" },
+      { label: "Dhaka", href: "/search?location=Dhaka%2C+Bangladesh&coordinates=90.4125%2C23.8103" },
+      { label: "Chattogram", href: "/search?location=Chattogram%2C+Bangladesh&coordinates=91.7832%2C22.3569" },
+      { label: "Sylhet", href: "/search?location=Sylhet%2C+Bangladesh&coordinates=91.8716%2C24.8949" },
+      { label: "Rajshahi", href: "/search?location=Rajshahi%2C+Bangladesh&coordinates=88.6042%2C24.3745" },
+      { label: "Khulna", href: "/search?location=Khulna%2C+Bangladesh&coordinates=89.5481%2C22.8456" },
     ],
   },
   {

@@ -52,9 +52,9 @@ const NewProperty = () => {
     defaultValues: {
       name: "",
       description: "",
-      pricePerMonth: 2500,
-      securityDeposit: 2500,
-      applicationFee: 40,
+      pricePerMonth: 30000,
+      securityDeposit: 30000,
+      applicationFee: 1000,
       isPetsAllowed: true,
       isParkingIncluded: true,
       photoUrls: [],
@@ -67,7 +67,7 @@ const NewProperty = () => {
       address: "",
       city: "",
       state: "",
-      country: "United States",
+      country: "Bangladesh",
       postalCode: "",
     },
   });
@@ -151,9 +151,9 @@ const NewProperty = () => {
             description="Renters see all fees up front, so keep them accurate."
           >
             <div className="grid gap-5 sm:grid-cols-3">
-              <CustomFormField name="pricePerMonth" label="Monthly rent" type="number" prefix="$" min={0} />
-              <CustomFormField name="securityDeposit" label="Security deposit" type="number" prefix="$" min={0} />
-              <CustomFormField name="applicationFee" label="Application fee" type="number" prefix="$" min={0} />
+              <CustomFormField name="pricePerMonth" label="Monthly rent" type="number" prefix="৳" min={0} />
+              <CustomFormField name="securityDeposit" label="Security deposit" type="number" prefix="৳" min={0} />
+              <CustomFormField name="applicationFee" label="Application fee" type="number" prefix="৳" min={0} />
             </div>
           </Section>
 
@@ -194,11 +194,11 @@ const NewProperty = () => {
             title="Address"
             description="We'll place the home on the map from this address."
           >
-            <CustomFormField name="address" label="Street address" placeholder="2412 Griffith Park Blvd" />
+            <CustomFormField name="address" label="Street address" placeholder="House 12, Road 4A" />
             <div className="grid gap-5 sm:grid-cols-3">
-              <CustomFormField name="city" label="City" placeholder="Los Angeles" />
-              <CustomFormField name="state" label="State" placeholder="CA" />
-              <CustomFormField name="postalCode" label="Postal code" placeholder="90039" />
+              <CustomFormField name="city" label="City" placeholder="Dhaka" />
+              <CustomFormField name="state" label="Division" placeholder="Dhaka" />
+              <CustomFormField name="postalCode" label="Postal code" placeholder="1209" />
             </div>
             <CustomFormField name="country" label="Country" />
           </Section>

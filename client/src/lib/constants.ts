@@ -133,15 +133,15 @@ export const DEMO_ACCOUNTS = [
   {
     role: "tenant" as const,
     label: "Tenant",
-    name: "Carol White",
-    email: "carol@rentiful.dev",
+    name: "Sadia Rahman",
+    email: "sadia@rentiful.bd",
     description: "Browse listings, save favorites, apply and track a lease.",
   },
   {
     role: "manager" as const,
     label: "Manager",
-    name: "John Smith",
-    email: "john@rentiful.dev",
-    description: "Manage 8 Los Angeles listings, review applications and tenants.",
+    name: "Md. Rahim Chowdhury",
+    email: "rahim@rentiful.bd",
+    description: "Manage Dhaka listings, review applications and tenants.",
   },
 ];

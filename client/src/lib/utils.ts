@@ -16,14 +16,14 @@ export function formatPriceValue(value: number | null, isMin: boolean) {
     return isMin ? "Any min price" : "Any max price";
   if (value >= 1000) {
     const kValue = value / 1000;
-    return isMin ? `$${kValue}k+` : `<$${kValue}k`;
+    return isMin ? `৳${kValue}k+` : `<৳${kValue}k`;
   }
-  return isMin ? `$${value}+` : `<$${value}`;
+  return isMin ? `৳${value}+` : `<৳${value}`;
 }
 
 const currency = new Intl.NumberFormat("en-US", {
   style: "currency",
-  currency: "USD",
+  currency: "BDT",
   maximumFractionDigits: 0,
 });
 

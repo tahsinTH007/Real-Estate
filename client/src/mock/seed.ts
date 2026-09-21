@@ -25,87 +25,87 @@ export const DEMO_PASSWORD = "demo1234";
 export const managers: Manager[] = [
   {
     id: 1,
-    cognitoId: "mgr-john-smith",
-    name: "John Smith",
-    email: "john@rentiful.dev",
-    phoneNumber: "(310) 555-0142",
+    cognitoId: "mgr-rahim-chowdhury",
+    name: "Md. Rahim Chowdhury",
+    email: "rahim@rentiful.bd",
+    phoneNumber: "+880 1711-234567",
   },
   {
     id: 2,
-    cognitoId: "mgr-elena-vasquez",
-    name: "Elena Vasquez",
-    email: "elena@rentiful.dev",
-    phoneNumber: "(415) 555-0198",
+    cognitoId: "mgr-farhana-islam",
+    name: "Farhana Islam",
+    email: "farhana@rentiful.bd",
+    phoneNumber: "+880 1812-345678",
   },
   {
     id: 3,
-    cognitoId: "mgr-marcus-chen",
-    name: "Marcus Chen",
-    email: "marcus@rentiful.dev",
-    phoneNumber: "(212) 555-0177",
+    cognitoId: "mgr-tanvir-ahmed",
+    name: "Tanvir Ahmed",
+    email: "tanvir@rentiful.bd",
+    phoneNumber: "+880 1913-456789",
   },
   {
     id: 4,
-    cognitoId: "mgr-priya-natarajan",
-    name: "Priya Natarajan",
-    email: "priya@rentiful.dev",
-    phoneNumber: "(512) 555-0133",
+    cognitoId: "mgr-nusrat-jahan",
+    name: "Nusrat Jahan",
+    email: "nusrat@rentiful.bd",
+    phoneNumber: "+880 1614-567890",
   },
 ];
 
 export const tenants: Omit<Tenant, "favorites">[] = [
   {
     id: 1,
-    cognitoId: "tnt-carol-white",
-    name: "Carol White",
-    email: "carol@rentiful.dev",
-    phoneNumber: "(323) 555-0119",
+    cognitoId: "tnt-sadia-rahman",
+    name: "Sadia Rahman",
+    email: "sadia@rentiful.bd",
+    phoneNumber: "+880 1715-678901",
   },
   {
     id: 2,
-    cognitoId: "tnt-ahmed-hassan",
-    name: "Ahmed Hassan",
-    email: "ahmed@rentiful.dev",
-    phoneNumber: "(424) 555-0164",
+    cognitoId: "tnt-mahmud-hasan",
+    name: "Mahmud Hasan",
+    email: "mahmud@rentiful.bd",
+    phoneNumber: "+880 1816-789012",
   },
   {
     id: 3,
-    cognitoId: "tnt-sofia-rossi",
-    name: "Sofia Rossi",
-    email: "sofia@rentiful.dev",
-    phoneNumber: "(213) 555-0151",
+    cognitoId: "tnt-tasnim-akther",
+    name: "Tasnim Akther",
+    email: "tasnim@rentiful.bd",
+    phoneNumber: "+880 1917-890123",
   },
   {
     id: 4,
-    cognitoId: "tnt-liam-oconnor",
-    name: "Liam O'Connor",
-    email: "liam@rentiful.dev",
-    phoneNumber: "(818) 555-0187",
+    cognitoId: "tnt-arif-hossain",
+    name: "Arif Hossain",
+    email: "arif@rentiful.bd",
+    phoneNumber: "+880 1618-901234",
   },
   {
     id: 5,
-    cognitoId: "tnt-mei-tanaka",
-    name: "Mei Tanaka",
-    email: "mei@rentiful.dev",
-    phoneNumber: "(626) 555-0122",
+    cognitoId: "tnt-nabila-sultana",
+    name: "Nabila Sultana",
+    email: "nabila@rentiful.bd",
+    phoneNumber: "+880 1719-012345",
   },
   {
     id: 6,
-    cognitoId: "tnt-jonas-berg",
-    name: "Jonas Berg",
-    email: "jonas@rentiful.dev",
-    phoneNumber: "(310) 555-0106",
+    cognitoId: "tnt-rifat-karim",
+    name: "Rifat Karim",
+    email: "rifat@rentiful.bd",
+    phoneNumber: "+880 1820-123456",
   },
 ];
 
 /** Tenant favourites: tenant cognitoId -> property ids */
 export const favorites: Record<string, number[]> = {
-  "tnt-carol-white": [1, 5, 9, 14, 21],
-  "tnt-ahmed-hassan": [2, 3],
-  "tnt-sofia-rossi": [4],
-  "tnt-liam-oconnor": [4, 5, 6],
-  "tnt-mei-tanaka": [1, 6, 8],
-  "tnt-jonas-berg": [],
+  "tnt-sadia-rahman": [1, 5, 9, 14, 21],
+  "tnt-mahmud-hasan": [2, 3],
+  "tnt-tasnim-akther": [4],
+  "tnt-arif-hossain": [4, 5, 6],
+  "tnt-nabila-sultana": [1, 6, 8],
+  "tnt-rifat-karim": [],
 };
 
 /* ------------------------------------------------------------------ */
@@ -146,7 +146,7 @@ export interface SeedProperty {
   };
 }
 
-export const properties: SeedProperty[] = [
+const sourceProperties: SeedProperty[] = [
   /* ---------------- John Smith — Los Angeles ---------------- */
   {
     id: 1,
@@ -1142,13 +1142,74 @@ export const properties: SeedProperty[] = [
   },
 ];
 
+const bangladeshLocations = [
+  ["Dhanmondi Lake View Apartment", "House 12, Road 4A", "Dhanmondi", "Dhaka", "1209", 90.3742, 23.7465],
+  ["Gulshan Family Residence", "House 38, Road 90", "Gulshan", "Dhaka", "1212", 90.4167, 23.7925],
+  ["Uttara Modern Flat", "Sector 7, Road 12", "Uttara", "Dhaka", "1230", 90.3978, 23.8759],
+  ["Bashundhara R/A Sunny Home", "Block C, Road 8", "Bashundhara", "Dhaka", "1229", 90.4269, 23.8155],
+  ["Banani Executive Studio", "Road 11, House 22", "Banani", "Dhaka", "1213", 90.4043, 23.7937],
+  ["Mohammadpur Garden Flat", "Iqbal Road, House 17", "Mohammadpur", "Dhaka", "1207", 90.3588, 23.7601],
+  ["Mirpur Family Apartment", "Section 10, Road 6", "Mirpur", "Dhaka", "1216", 90.3664, 23.8067],
+  ["Lalmatia Quiet Residence", "Block D, Road 2", "Lalmatia", "Dhaka", "1207", 90.3715, 23.7532],
+  ["Baridhara Diplomatic Flat", "Park Road, House 9", "Baridhara", "Dhaka", "1212", 90.4184, 23.8041],
+  ["Tejgaon Contemporary Apartment", "Nabisco Road, House 33", "Tejgaon", "Dhaka", "1215", 90.3992, 23.7617],
+  ["Chattogram Bay View Flat", "Khulshi, Road 3", "Khulshi", "Chattogram", "4225", 91.8123, 22.3696],
+  ["Agrabad City Apartment", "CDA Avenue, House 14", "Agrabad", "Chattogram", "4100", 91.8135, 22.3266],
+  ["Panchlaish Family Home", "O.R. Nizam Road, House 28", "Panchlaish", "Chattogram", "4203", 91.8159, 22.3617],
+  ["Nasirabad Premium Flat", "Housing Society Road 5", "Nasirabad", "Chattogram", "4000", 91.8061, 22.3579],
+  ["Sylhet Zindabazar Apartment", "Jail Road, House 18", "Zindabazar", "Sylhet", "3100", 91.8716, 24.8949],
+  ["Shahjalal Upashahar Home", "Block B, Road 7", "Upashahar", "Sylhet", "3100", 91.8798, 24.8992],
+  ["Rajshahi Padma View Flat", "Shaheb Bazar, Road 4", "Boalia", "Rajshahi", "6000", 88.6042, 24.3745],
+  ["Kazla University Area Flat", "Kazla Road, House 6", "Kazla", "Rajshahi", "6204", 88.6402, 24.3689],
+  ["Khulna Sonadanga Residence", "Main Road, House 31", "Sonadanga", "Khulna", "9100", 89.5481, 22.8291],
+  ["Nirala Riverside Apartment", "Nirala Residential Area", "Nirala", "Khulna", "9100", 89.5457, 22.8172],
+  ["Rangpur Modern Family Flat", "Jahaj Company Mor, Road 2", "Rangpur", "Rangpur", "5400", 89.2442, 25.7439],
+  ["Mymensingh Town Apartment", "Charpara, House 16", "Mymensingh", "Mymensingh", "2200", 90.3988, 24.7471],
+  ["Cox's Bazar Beachside Home", "Kolatoli Road, House 7", "Kolatoli", "Cox's Bazar", "4700", 91.9737, 21.4272],
+  ["Cumilla Kandirpar Apartment", "Tomsom Bridge Road", "Kandirpar", "Cumilla", "3500", 91.1809, 23.4619],
+  ["Savar Green Living Flat", "Nabinagar Road, House 21", "Savar", "Dhaka", "1340", 90.2563, 23.8583],
+  ["Narayanganj Riverside Flat", "Bangabandhu Road, House 12", "Narayanganj", "Dhaka", "1400", 90.5002, 23.6238],
+  ["Jashore Central Apartment", "Mujib Sarak, House 19", "Jashore", "Jashore", "7400", 89.2086, 23.1664],
+  ["Pabna Comfortable Family Home", "Shalgaria Road, House 5", "Pabna", "Pabna", "6600", 89.2372, 24.0064],
+] as const;
+
+const bdt = (value: number) => Math.round((value * 18) / 500) * 500;
+const managerIds: Record<string, string> = {
+  "mgr-john-smith": "mgr-rahim-chowdhury",
+  "mgr-elena-vasquez": "mgr-farhana-islam",
+  "mgr-marcus-chen": "mgr-tanvir-ahmed",
+  "mgr-priya-natarajan": "mgr-nusrat-jahan",
+};
+const tenantIds: Record<string, string> = {
+  "tnt-carol-white": "tnt-sadia-rahman",
+  "tnt-ahmed-hassan": "tnt-mahmud-hasan",
+  "tnt-sofia-rossi": "tnt-tasnim-akther",
+  "tnt-liam-oconnor": "tnt-arif-hossain",
+  "tnt-mei-tanaka": "tnt-nabila-sultana",
+  "tnt-jonas-berg": "tnt-rifat-karim",
+};
+
+export const properties: SeedProperty[] = sourceProperties.map((property, index) => {
+  const [name, address, city, state, postalCode, longitude, latitude] = bangladeshLocations[index]!;
+  return {
+    ...property,
+    name,
+    description: `Well-maintained ${property.beds === 0 ? "studio" : `${property.beds}-bedroom`} home in ${city}, ${state}. Bright living spaces, practical finishes and convenient access to neighbourhood shops, schools, transport and everyday services.`,
+    pricePerMonth: bdt(property.pricePerMonth),
+    securityDeposit: bdt(property.securityDeposit),
+    applicationFee: Math.max(500, bdt(property.applicationFee)),
+    managerCognitoId: managerIds[property.managerCognitoId]!,
+    location: { address, city, state, country: "Bangladesh", postalCode, longitude, latitude },
+  };
+});
+
 /* ------------------------------------------------------------------ */
 /* Leases, payments, applications                                      */
 /* ------------------------------------------------------------------ */
 
 export type SeedLease = Omit<Lease, "property" | "tenant" | "nextPaymentDate">;
 
-export const leases: SeedLease[] = [
+const sourceLeases: SeedLease[] = [
   {
     id: 1,
     startDate: "2026-01-01T00:00:00.000Z",
@@ -1195,6 +1256,13 @@ export const leases: SeedLease[] = [
     tenantCognitoId: "tnt-jonas-berg",
   },
 ];
+
+export const leases: SeedLease[] = sourceLeases.map((lease) => ({
+  ...lease,
+  rent: bdt(lease.rent),
+  deposit: bdt(lease.deposit),
+  tenantCognitoId: tenantIds[lease.tenantCognitoId]!,
+}));
 
 /**
  * Generate a monthly payment history for each lease up to `now`.
@@ -1261,7 +1329,7 @@ export type SeedApplication = Omit<
   "property" | "tenant" | "manager" | "lease"
 >;
 
-export const applications: SeedApplication[] = [
+const sourceApplications: SeedApplication[] = [
   {
     id: 1,
     applicationDate: "2025-12-18T15:20:00.000Z",
@@ -1395,3 +1463,17 @@ export const applications: SeedApplication[] = [
     leaseId: 5,
   },
 ];
+
+export const applications: SeedApplication[] = sourceApplications.map((application) => {
+  const tenant = tenants.find((item) => item.cognitoId === tenantIds[application.tenantCognitoId]);
+  return {
+    ...application,
+    tenantCognitoId: tenantIds[application.tenantCognitoId]!,
+    name: tenant!.name,
+    email: tenant!.email,
+    phoneNumber: tenant!.phoneNumber,
+    message: application.message
+      ? "I am interested in this home and can provide the required references and documents. I am looking for a comfortable long-term rental in this neighbourhood."
+      : null,
+  };
+});

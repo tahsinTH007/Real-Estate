@@ -55,7 +55,7 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
             instant applications made the whole thing painless.”
           </blockquote>
           <p className="mt-5 text-sm text-white/80">
-            Carol W. · Tenant in Los Angeles
+            Sadia R. · Tenant in Dhaka
           </p>
         </div>
       </div>

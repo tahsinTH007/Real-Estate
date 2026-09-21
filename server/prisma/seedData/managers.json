@@ -1,30 +1,30 @@
 [
   {
     "id": 1,
-    "cognitoId": "mgr-john-smith",
-    "name": "John Smith",
-    "email": "john@rentiful.dev",
-    "phoneNumber": "(310) 555-0142"
+    "cognitoId": "mgr-rahim-chowdhury",
+    "name": "Md. Rahim Chowdhury",
+    "email": "rahim@rentiful.bd",
+    "phoneNumber": "+880 1711-234567"
   },
   {
     "id": 2,
-    "cognitoId": "mgr-elena-vasquez",
-    "name": "Elena Vasquez",
-    "email": "elena@rentiful.dev",
-    "phoneNumber": "(415) 555-0198"
+    "cognitoId": "mgr-farhana-islam",
+    "name": "Farhana Islam",
+    "email": "farhana@rentiful.bd",
+    "phoneNumber": "+880 1812-345678"
   },
   {
     "id": 3,
-    "cognitoId": "mgr-marcus-chen",
-    "name": "Marcus Chen",
-    "email": "marcus@rentiful.dev",
-    "phoneNumber": "(212) 555-0177"
+    "cognitoId": "mgr-tanvir-ahmed",
+    "name": "Tanvir Ahmed",
+    "email": "tanvir@rentiful.bd",
+    "phoneNumber": "+880 1913-456789"
   },
   {
     "id": 4,
-    "cognitoId": "mgr-priya-natarajan",
-    "name": "Priya Natarajan",
-    "email": "priya@rentiful.dev",
-    "phoneNumber": "(512) 555-0133"
+    "cognitoId": "mgr-nusrat-jahan",
+    "name": "Nusrat Jahan",
+    "email": "nusrat@rentiful.bd",
+    "phoneNumber": "+880 1614-567890"
   }
 ]

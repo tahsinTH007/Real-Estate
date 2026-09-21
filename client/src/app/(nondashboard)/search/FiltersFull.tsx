@@ -12,12 +12,12 @@ import {
   PropertyTypeIcons,
   PropertyTypeLabels,
 } from "@/lib/constants";
-import { cn, formatEnumString } from "@/lib/utils";
+import { cn, formatCurrency, formatEnumString } from "@/lib/utils";
 import { initialState, setFiltersFullOpen, type FiltersState } from "@/state";
 import { useAppDispatch } from "@/state/redux";
 import { useFilterUrl } from "./useFilterUrl";
 
-const PRICE_MAX = 12000;
+const PRICE_MAX = 200000;
 const SQFT_MAX = 4000;
 
 interface FiltersFullProps {
@@ -108,14 +108,14 @@ const FiltersFull = ({ onApplied }: FiltersFullProps) => {
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-sm font-semibold text-ink">Monthly rent</h3>
             <span className="text-xs font-medium text-ink-muted">
-              ${price[0].toLocaleString()} – ${price[1].toLocaleString()}
+              {formatCurrency(price[0])} – {formatCurrency(price[1])}
               {price[1] === PRICE_MAX && "+"}
             </span>
           </div>
           <Slider
             min={0}
             max={PRICE_MAX}
-            step={100}
+            step={1000}
             value={price}
             onValueChange={([min, max]) =>
               update({

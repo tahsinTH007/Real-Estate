@@ -24,7 +24,7 @@ import {
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { PROPERTY_TYPES, PropertyTypeIcons, PropertyTypeLabels } from "@/lib/constants";
 import { geocode } from "@/lib/geocode";
-import { cn, formatPriceValue } from "@/lib/utils";
+import { cn, formatCurrency, formatPriceValue } from "@/lib/utils";
 import {
   resetFilters,
   setSortBy,
@@ -36,8 +36,8 @@ import { useAppDispatch, useAppSelector } from "@/state/redux";
 import FiltersFull from "./FiltersFull";
 import { countActiveFilters, useFilterUrl } from "./useFilterUrl";
 
-const MIN_PRICES = [500, 1000, 1500, 2000, 3000, 5000, 8000];
-const MAX_PRICES = [1000, 2000, 3000, 5000, 8000, 12000];
+const MIN_PRICES = [10000, 20000, 30000, 40000, 60000, 80000, 120000];
+const MAX_PRICES = [20000, 30000, 40000, 60000, 80000, 120000, 200000];
 
 const sortOptions: { value: SortBy; label: string }[] = [
   { value: "recommended", label: "Recommended" },
@@ -123,7 +123,7 @@ const FiltersBar = () => {
               <SelectItem value="any">Any min price</SelectItem>
               {MIN_PRICES.map((p) => (
                 <SelectItem key={p} value={String(p)}>
-                  ${p.toLocaleString()}+
+                  {formatCurrency(p)}+
                 </SelectItem>
               ))}
             </SelectContent>
@@ -140,7 +140,7 @@ const FiltersBar = () => {
               <SelectItem value="any">Any max price</SelectItem>
               {MAX_PRICES.map((p) => (
                 <SelectItem key={p} value={String(p)}>
-                  Up to ${p.toLocaleString()}
+                  Up to {formatCurrency(p)}
                 </SelectItem>
               ))}
             </SelectContent>

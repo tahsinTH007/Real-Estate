@@ -26,7 +26,7 @@ import {
   tenants as seedTenants,
 } from "./seed";
 
-const DB_VERSION = 3;
+const DB_VERSION = 4;
 const STORAGE_KEY = `rentiful.mockdb.v${DB_VERSION}`;
 
 export interface Credential {

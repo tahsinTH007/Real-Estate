@@ -3,45 +3,45 @@
     "id": 1,
     "startDate": "2026-01-01T00:00:00.000Z",
     "endDate": "2026-12-31T00:00:00.000Z",
-    "rent": 2780,
-    "deposit": 2500,
+    "rent": 50000,
+    "deposit": 45000,
     "propertyId": 3,
-    "tenantCognitoId": "tnt-carol-white"
+    "tenantCognitoId": "tnt-sadia-rahman"
   },
   {
     "id": 2,
     "startDate": "2025-11-15T00:00:00.000Z",
     "endDate": "2026-11-14T00:00:00.000Z",
-    "rent": 3450,
-    "deposit": 3450,
+    "rent": 62000,
+    "deposit": 62000,
     "propertyId": 1,
-    "tenantCognitoId": "tnt-ahmed-hassan"
+    "tenantCognitoId": "tnt-mahmud-hasan"
   },
   {
     "id": 3,
     "startDate": "2026-03-01T00:00:00.000Z",
     "endDate": "2027-02-28T00:00:00.000Z",
-    "rent": 6200,
-    "deposit": 6200,
+    "rent": 111500,
+    "deposit": 111500,
     "propertyId": 2,
-    "tenantCognitoId": "tnt-sofia-rossi"
+    "tenantCognitoId": "tnt-tasnim-akther"
   },
   {
     "id": 4,
     "startDate": "2026-06-01T00:00:00.000Z",
     "endDate": "2027-05-31T00:00:00.000Z",
-    "rent": 2950,
-    "deposit": 2950,
+    "rent": 53000,
+    "deposit": 53000,
     "propertyId": 6,
-    "tenantCognitoId": "tnt-mei-tanaka"
+    "tenantCognitoId": "tnt-nabila-sultana"
   },
   {
     "id": 5,
     "startDate": "2026-04-01T00:00:00.000Z",
     "endDate": "2027-03-31T00:00:00.000Z",
-    "rent": 4850,
-    "deposit": 4850,
+    "rent": 87500,
+    "deposit": 87500,
     "propertyId": 11,
-    "tenantCognitoId": "tnt-jonas-berg"
+    "tenantCognitoId": "tnt-rifat-karim"
   }
 ]
