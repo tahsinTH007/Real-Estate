@@ -1,119 +1,137 @@
+"use client";
+
+import { Car, CircleHelp, PawPrint, Receipt } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AmenityIcons, HighlightIcons } from "@/lib/constants";
-import { formatEnumString } from "@/lib/utils";
-import { useGetPropertyQuery } from "@/state/api";
-import { HelpCircle } from "lucide-react";
-import React from "react";
+import { formatCurrency, formatEnumString } from "@/lib/utils";
+import type { Property } from "@/types/models";
 
-const PropertyDetails = ({ propertyId }: PropertyDetailsProps) => {
-  const {
-    data: property,
-    isError,
-    isLoading,
-  } = useGetPropertyQuery(propertyId);
-
-  if (isLoading) return <>Loading...</>;
-  if (isError || !property) {
-    return <>Property not Found</>;
-  }
-
+const PropertyDetails = ({ property }: { property: Property }) => {
   return (
-    <div className="mb-6">
+    <div className="space-y-12">
       {/* Amenities */}
-      <div>
-        <h2 className="text-xl font-semibold my-3">Property Amenities</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-          {property.amenities.map((amenity: AmenityEnum) => {
-            const Icon = AmenityIcons[amenity as AmenityEnum] || HelpCircle;
+      <section>
+        <h2 className="text-lg font-semibold text-ink">Amenities</h2>
+        <ul className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+          {property.amenities.map((amenity) => {
+            const Icon = AmenityIcons[amenity] ?? CircleHelp;
             return (
-              <div
+              <li
                 key={amenity}
-                className="flex flex-col items-center border rounded-xl py-8 px-4"
+                className="flex items-center gap-3 rounded-xl border border-sand-200 bg-white px-3.5 py-3 text-sm text-ink"
               >
-                <Icon className="w-8 h-8 mb-2 text-gray-700" />
-                <span className="text-sm text-center text-gray-700">
-                  {formatEnumString(amenity)}
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-700">
+                  <Icon className="h-4 w-4" />
                 </span>
-              </div>
+                {formatEnumString(amenity)}
+              </li>
             );
           })}
-        </div>
-      </div>
+        </ul>
+      </section>
 
       {/* Highlights */}
-      <div className="mt-12 mb-16">
-        <h3 className="text-xl font-semibold text-primary-800 dark:text-primary-100">
-          Highlights
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mt-4 w-full">
-          {property.highlights.map((highlight: HighlightEnum) => {
-            const Icon =
-              HighlightIcons[highlight as HighlightEnum] || HelpCircle;
+      <section>
+        <h2 className="text-lg font-semibold text-ink">Highlights</h2>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {property.highlights.map((highlight) => {
+            const Icon = HighlightIcons[highlight] ?? CircleHelp;
             return (
-              <div
+              <span
                 key={highlight}
-                className="flex flex-col items-center border rounded-xl py-8 px-4"
+                className="inline-flex items-center gap-1.5 rounded-full border border-sand-200 bg-sand-50 px-3 py-1.5 text-xs font-medium text-ink-muted"
               >
-                <Icon className="w-8 h-8 mb-2 text-primary-600 dark:text-primary-300" />
-                <span className="text-sm text-center text-primary-600 dark:text-primary-300">
-                  {formatEnumString(highlight)}
-                </span>
-              </div>
+                <Icon className="h-3.5 w-3.5 text-brand-700" />
+                {formatEnumString(highlight)}
+              </span>
             );
           })}
         </div>
-      </div>
+      </section>
 
-      {/* Tabs Section */}
-      <div>
-        <h3 className="text-xl font-semibold text-primary-800 dark:text-primary-100 mb-5">
-          Fees and Policies
-        </h3>
-        <p className="text-sm text-primary-600 dark:text-primary-300 mt-2">
-          The fees below are based on community-supplied data and may exclude
-          additional fees and utilities.
+      {/* Fees & policies */}
+      <section>
+        <h2 className="text-lg font-semibold text-ink">Fees & policies</h2>
+        <p className="mt-1 text-sm text-ink-soft">
+          Based on data provided by the property. Utilities may not be included.
         </p>
-        <Tabs defaultValue="required-fees" className="mt-8">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="required-fees">Required Fees</TabsTrigger>
-            <TabsTrigger value="pets">Pets</TabsTrigger>
-            <TabsTrigger value="parking">Parking</TabsTrigger>
+        <Tabs defaultValue="fees" className="mt-5">
+          <TabsList>
+            <TabsTrigger value="fees">
+              <Receipt className="h-4 w-4" /> Move-in fees
+            </TabsTrigger>
+            <TabsTrigger value="pets">
+              <PawPrint className="h-4 w-4" /> Pets
+            </TabsTrigger>
+            <TabsTrigger value="parking">
+              <Car className="h-4 w-4" /> Parking
+            </TabsTrigger>
           </TabsList>
-          <TabsContent value="required-fees" className="w-1/3">
-            <p className="font-semibold mt-5 mb-2">One time move in fees</p>
-            <hr />
-            <div className="flex justify-between py-2 bg-secondary-50">
-              <span className="text-primary-700 font-medium">
-                Application Fee
-              </span>
-              <span className="text-primary-700">
-                ${property.applicationFee}
-              </span>
-            </div>
-            <hr />
-            <div className="flex justify-between py-2 bg-secondary-50">
-              <span className="text-primary-700 font-medium">
-                Security Deposit
-              </span>
-              <span className="text-primary-700">
-                ${property.securityDeposit}
-              </span>
-            </div>
-            <hr />
+
+          <TabsContent value="fees" className="mt-4">
+            <dl className="divide-y divide-sand-200 overflow-hidden rounded-2xl border border-sand-200 bg-white">
+              {[
+                { label: "First month's rent", value: property.pricePerMonth },
+                { label: "Security deposit", value: property.securityDeposit },
+                { label: "Application fee", value: property.applicationFee },
+              ].map((row) => (
+                <div key={row.label} className="flex items-center justify-between px-4 py-3 text-sm">
+                  <dt className="text-ink-muted">{row.label}</dt>
+                  <dd className="font-semibold text-ink">{formatCurrency(row.value)}</dd>
+                </div>
+              ))}
+              <div className="flex items-center justify-between bg-sand-50 px-4 py-3 text-sm">
+                <dt className="font-semibold text-ink">Total due at move-in</dt>
+                <dd className="font-bold text-brand-800">
+                  {formatCurrency(
+                    property.pricePerMonth + property.securityDeposit + property.applicationFee,
+                  )}
+                </dd>
+              </div>
+            </dl>
           </TabsContent>
-          <TabsContent value="pets">
-            <p className="font-semibold mt-5 mb-2">
-              Pets are {property.isPetsAllowed ? "allowed" : "not allowed"}
-            </p>
+
+          <TabsContent value="pets" className="mt-4">
+            <div className="rounded-2xl border border-sand-200 bg-white p-5 text-sm">
+              {property.isPetsAllowed ? (
+                <>
+                  <p className="font-semibold text-ink">Pets are welcome</p>
+                  <p className="mt-1 text-ink-muted">
+                    Cats and dogs are allowed. Ask the manager about any breed or weight limits and pet deposits.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="font-semibold text-ink">No pets</p>
+                  <p className="mt-1 text-ink-muted">
+                    This property does not allow pets, with the exception of registered assistance animals.
+                  </p>
+                </>
+              )}
+            </div>
           </TabsContent>
-          <TabsContent value="parking">
-            <p className="font-semibold mt-5 mb-2">
-              Parking is{" "}
-              {property.isParkingIncluded ? "included" : "not included"}
-            </p>
+
+          <TabsContent value="parking" className="mt-4">
+            <div className="rounded-2xl border border-sand-200 bg-white p-5 text-sm">
+              {property.isParkingIncluded ? (
+                <>
+                  <p className="font-semibold text-ink">Parking included</p>
+                  <p className="mt-1 text-ink-muted">
+                    At least one dedicated parking space is included with the lease at no extra cost.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="font-semibold text-ink">Street parking only</p>
+                  <p className="mt-1 text-ink-muted">
+                    No dedicated parking is included. Check local permit requirements for street parking.
+                  </p>
+                </>
+              )}
+            </div>
           </TabsContent>
         </Tabs>
-      </div>
+      </section>
     </div>
   );
 };

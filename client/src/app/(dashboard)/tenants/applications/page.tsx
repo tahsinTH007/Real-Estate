@@ -1,69 +1,123 @@
 "use client";
 
+import Link from "next/link";
+import { CheckCircle2, Clock, Download, ExternalLink, FileText, Home, Search, XCircle } from "lucide-react";
+import { toast } from "sonner";
 import ApplicationCard from "@/components/ApplicationCard";
+import EmptyState from "@/components/EmptyState";
 import Header from "@/components/Header";
-import Loading from "@/components/Loading";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { formatDate } from "@/lib/utils";
 import { useGetApplicationsQuery, useGetAuthUserQuery } from "@/state/api";
-import { CircleCheckBig, Clock, Download, XCircle } from "lucide-react";
-import React from "react";
 
 const Applications = () => {
   const { data: authUser } = useGetAuthUserQuery();
-  const {
-    data: applications,
-    isLoading,
-    isError,
-  } = useGetApplicationsQuery({
-    userId: authUser?.cognitoInfo?.userId,
-    userType: "tenant",
-  });
-
-  if (isLoading) return <Loading />;
-  if (isError || !applications) return <div>Error fetching applications</div>;
+  const { data: applications, isLoading, isError } = useGetApplicationsQuery(
+    { userId: authUser?.cognitoInfo.userId, userType: "tenant" },
+    { skip: !authUser?.cognitoInfo.userId },
+  );
 
   return (
     <div className="dashboard-container">
       <Header
-        title="Applications"
-        subtitle="Track and manage your property rental applications"
+        title="My applications"
+        subtitle="Track every application you've sent and what happens next."
+        actions={
+          <Button asChild variant="outline">
+            <Link href="/search">
+              <Search /> Find more homes
+            </Link>
+          </Button>
+        }
       />
-      <div className="w-full">
-        {applications?.map((application) => (
-          <ApplicationCard
-            key={application.id}
-            application={application}
-            userType="renter"
-          >
-            <div className="flex justify-between gap-5 w-full pb-4 px-4">
-              {application.status === "Approved" ? (
-                <div className="bg-green-100 p-4 text-green-700 grow flex items-center">
-                  <CircleCheckBig className="w-5 h-5 mr-2" />
-                  The property is being rented by you until{" "}
-                  {new Date(application.lease?.endDate).toLocaleDateString()}
-                </div>
-              ) : application.status === "Pending" ? (
-                <div className="bg-yellow-100 p-4 text-yellow-700 grow flex items-center">
-                  <Clock className="w-5 h-5 mr-2" />
-                  Your application is pending approval
-                </div>
-              ) : (
-                <div className="bg-red-100 p-4 text-red-700 grow flex items-center">
-                  <XCircle className="w-5 h-5 mr-2" />
-                  Your application has been denied
-                </div>
-              )}
 
-              <button
-                className={`bg-white border border-gray-300 text-gray-700 py-2 px-4
-                          rounded-md flex items-center justify-center hover:bg-primary-700 hover:text-primary-50`}
-              >
-                <Download className="w-5 h-5 mr-2" />
-                Download Agreement
-              </button>
-            </div>
-          </ApplicationCard>
-        ))}
-      </div>
+      {isLoading ? (
+        <div className="space-y-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} className="h-48 w-full rounded-2xl" />
+          ))}
+        </div>
+      ) : isError ? (
+        <EmptyState icon={FileText} title="Couldn't load applications" description="Please refresh to try again." />
+      ) : !applications?.length ? (
+        <EmptyState
+          icon={FileText}
+          title="You haven't applied anywhere yet"
+          description="Find a home you love and hit Apply — it only takes a minute."
+          action={
+            <Button asChild>
+              <Link href="/search">
+                <Search /> Browse homes
+              </Link>
+            </Button>
+          }
+        />
+      ) : (
+        <div className="space-y-4">
+          {applications.map((application) => (
+            <ApplicationCard
+              key={application.id}
+              application={application}
+              userType="tenant"
+              propertyLink={`/search/${application.property.id}`}
+            >
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-2 text-sm">
+                  {application.status === "Approved" && (
+                    <>
+                      <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+                      <span className="text-ink-muted">
+                        Approved — your lease runs until{" "}
+                        <strong className="text-ink">{formatDate(application.lease?.endDate)}</strong>.
+                      </span>
+                    </>
+                  )}
+                  {application.status === "Pending" && (
+                    <>
+                      <Clock className="h-4 w-4 text-amber-600" />
+                      <span className="text-ink-muted">
+                        The manager is reviewing your application. Most reply within 48 hours.
+                      </span>
+                    </>
+                  )}
+                  {application.status === "Denied" && (
+                    <>
+                      <XCircle className="h-4 w-4 text-rose-600" />
+                      <span className="text-ink-muted">
+                        This one didn&apos;t work out — keep looking, there are more homes nearby.
+                      </span>
+                    </>
+                  )}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Button asChild variant="outline" size="sm">
+                    <Link href={`/search/${application.property.id}`}>
+                      <ExternalLink /> Listing
+                    </Link>
+                  </Button>
+                  {application.status === "Approved" && (
+                    <>
+                      <Button asChild variant="outline" size="sm">
+                        <Link href={`/tenants/residences/${application.property.id}`}>
+                          <Home /> My residence
+                        </Link>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => toast.info("Document downloads aren't available in the demo.")}
+                      >
+                        <Download /> Agreement
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </div>
+            </ApplicationCard>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

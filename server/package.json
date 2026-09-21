@@ -7,8 +7,7 @@
     "start": "npm run build && node dist/index.js",
     "dev": "npm run build && concurrently \"npx tsc -w\" \"nodemon --exec ts-node src/index.ts\"",
     "seed": "ts-node prisma/seed.ts",
-    "prisma:generate": "prisma generate",
-    "postprisma:generate": "shx cp -r node_modules/.prisma/client/index.d.ts ../client/src/types/prismaTypes.d.ts"
+    "prisma:generate": "prisma generate"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +18,7 @@
     "@aws-sdk/lib-storage": "^3.740.0",
     "@prisma/client": "^6.3.0",
     "@terraformer/wkt": "^2.2.1",
+    "aws-jwt-verify": "^4.0.1",
     "axios": "^1.7.9",
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
@@ -45,5 +45,8 @@
     "shx": "^0.3.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   }
 }

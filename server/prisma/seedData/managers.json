@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "cognitoId": "mgr-john-smith",
+    "name": "John Smith",
+    "email": "john@rentiful.dev",
+    "phoneNumber": "(310) 555-0142"
+  },
+  {
+    "id": 2,
+    "cognitoId": "mgr-elena-vasquez",
+    "name": "Elena Vasquez",
+    "email": "elena@rentiful.dev",
+    "phoneNumber": "(415) 555-0198"
+  },
+  {
+    "id": 3,
+    "cognitoId": "mgr-marcus-chen",
+    "name": "Marcus Chen",
+    "email": "marcus@rentiful.dev",
+    "phoneNumber": "(212) 555-0177"
+  },
+  {
+    "id": 4,
+    "cognitoId": "mgr-priya-natarajan",
+    "name": "Priya Natarajan",
+    "email": "priya@rentiful.dev",
+    "phoneNumber": "(512) 555-0133"
+  }
+]

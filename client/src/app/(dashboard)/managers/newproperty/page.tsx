@@ -1,239 +1,219 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2, Sparkles } from "lucide-react";
 import { CustomFormField } from "@/components/FormField";
 import Header from "@/components/Header";
-import { Form } from "@/components/ui/form";
-import { PropertyFormData, propertySchema } from "@/lib/schemas";
-import { useCreatePropertyMutation, useGetAuthUserQuery } from "@/state/api";
-import { AmenityEnum, HighlightEnum, PropertyTypeEnum } from "@/lib/constants";
-import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
-import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
+import { Form } from "@/components/ui/form";
+import {
+  AMENITIES,
+  AmenityIcons,
+  HIGHLIGHTS,
+  HighlightIcons,
+  PROPERTY_TYPES,
+  PropertyTypeIcons,
+  PropertyTypeLabels,
+} from "@/lib/constants";
+import { geocode } from "@/lib/geocode";
+import { propertySchema, type PropertyFormData } from "@/lib/schemas";
+import { formatEnumString } from "@/lib/utils";
+import { useCreatePropertyMutation, useGetAuthUserQuery } from "@/state/api";
+
+const Section = ({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+}) => (
+  <section className="grid gap-6 py-8 first:pt-0 last:pb-0 lg:grid-cols-[260px_minmax(0,1fr)]">
+    <div>
+      <h2 className="text-base font-semibold text-ink">{title}</h2>
+      {description && <p className="mt-1 text-sm leading-relaxed text-ink-soft">{description}</p>}
+    </div>
+    <div className="space-y-5">{children}</div>
+  </section>
+);
 
 const NewProperty = () => {
+  const router = useRouter();
   const [createProperty] = useCreatePropertyMutation();
   const { data: authUser } = useGetAuthUserQuery();
+  const [submitting, setSubmitting] = useState(false);
 
   const form = useForm<PropertyFormData>({
     resolver: zodResolver(propertySchema),
     defaultValues: {
       name: "",
       description: "",
-      pricePerMonth: 1000,
-      securityDeposit: 500,
-      applicationFee: 100,
+      pricePerMonth: 2500,
+      securityDeposit: 2500,
+      applicationFee: 40,
       isPetsAllowed: true,
       isParkingIncluded: true,
       photoUrls: [],
-      amenities: "",
-      highlights: "",
+      amenities: [],
+      highlights: [],
       beds: 1,
       baths: 1,
-      squareFeet: 1000,
+      squareFeet: 800,
+      propertyType: "Apartment",
       address: "",
       city: "",
       state: "",
-      country: "",
+      country: "United States",
       postalCode: "",
     },
   });
 
   const onSubmit = async (data: PropertyFormData) => {
-    if (!authUser?.cognitoInfo?.userId) {
-      throw new Error("No manager ID found");
+    if (!authUser?.cognitoInfo.userId) return;
+    setSubmitting(true);
+    try {
+      // Resolve coordinates so the listing shows up on the map.
+      const geo = await geocode(`${data.address}, ${data.city}, ${data.state}`);
+      const fallback = await (geo ? null : geocode(`${data.city}, ${data.state}`));
+      const coords = geo?.coordinates ?? fallback?.coordinates ?? [0, 0];
+
+      const formData = new FormData();
+      Object.entries(data).forEach(([key, value]) => {
+        if (key === "photoUrls") {
+          (value as File[]).forEach((file) => formData.append("photos", file));
+        } else if (Array.isArray(value)) {
+          formData.append(key, value.join(","));
+        } else {
+          formData.append(key, String(value));
+        }
+      });
+      formData.append("managerCognitoId", authUser.cognitoInfo.userId);
+      formData.append("longitude", String(coords[0]));
+      formData.append("latitude", String(coords[1]));
+
+      const created = await createProperty(formData).unwrap();
+      router.push(`/managers/properties/${created.id}`);
+    } catch {
+      setSubmitting(false);
     }
-
-    const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => {
-      if (key === "photoUrls") {
-        const files = value as File[];
-        files.forEach((file: File) => {
-          formData.append("photos", file);
-        });
-      } else if (Array.isArray(value)) {
-        formData.append(key, JSON.stringify(value));
-      } else {
-        formData.append(key, String(value));
-      }
-    });
-
-    formData.append("managerCognitoId", authUser.cognitoInfo.userId);
-
-    await createProperty(formData);
   };
 
   return (
     <div className="dashboard-container">
       <Header
-        title="Add New Property"
-        subtitle="Create a new property listing with detailed information"
+        title="List a new property"
+        subtitle="Fill in the details below — you can edit everything later."
       />
-      <div className="bg-white rounded-xl p-6">
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="p-4 space-y-10"
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="surface divide-y divide-sand-200 p-6 sm:p-8">
+          <Section
+            title="The basics"
+            description="A clear name and an honest description are the best way to attract good applicants."
           >
-            {/* Basic Information */}
-            <div>
-              <h2 className="text-lg font-semibold mb-4">Basic Information</h2>
-              <div className="space-y-4">
-                <CustomFormField name="name" label="Property Name" />
-                <CustomFormField
-                  name="description"
-                  label="Description"
-                  type="textarea"
-                />
-              </div>
+            <CustomFormField name="name" label="Listing title" placeholder="e.g. Sunny Silver Lake loft with reservoir views" />
+            <CustomFormField
+              name="description"
+              label="Description"
+              type="textarea"
+              placeholder="Describe the layout, light, neighborhood, transit and anything that makes it special."
+            />
+            <CustomFormField
+              name="propertyType"
+              label="Home type"
+              type="select"
+              options={PROPERTY_TYPES.map((t) => ({
+                value: t,
+                label: PropertyTypeLabels[t],
+                icon: PropertyTypeIcons[t],
+              }))}
+            />
+          </Section>
+
+          <Section title="Size & layout">
+            <div className="grid gap-5 sm:grid-cols-3">
+              <CustomFormField name="beds" label="Bedrooms" type="number" min={0} description="0 for a studio" />
+              <CustomFormField name="baths" label="Bathrooms" type="number" step={0.5} min={0.5} />
+              <CustomFormField name="squareFeet" label="Square feet" type="number" min={1} />
             </div>
-
-            <hr className="my-6 border-gray-200" />
-
-            {/* Fees */}
-            <div className="space-y-6">
-              <h2 className="text-lg font-semibold mb-4">Fees</h2>
-              <CustomFormField
-                name="pricePerMonth"
-                label="Price per Month"
-                type="number"
-              />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <CustomFormField
-                  name="securityDeposit"
-                  label="Security Deposit"
-                  type="number"
-                />
-                <CustomFormField
-                  name="applicationFee"
-                  label="Application Fee"
-                  type="number"
-                />
-              </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <CustomFormField name="isPetsAllowed" label="Pets allowed" type="switch" />
+              <CustomFormField name="isParkingIncluded" label="Parking included" type="switch" />
             </div>
+          </Section>
 
-            <hr className="my-6 border-gray-200" />
-
-            {/* Property Details */}
-            <div className="space-y-6">
-              <h2 className="text-lg font-semibold mb-4">Property Details</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <CustomFormField
-                  name="beds"
-                  label="Number of Beds"
-                  type="number"
-                />
-                <CustomFormField
-                  name="baths"
-                  label="Number of Baths"
-                  type="number"
-                />
-                <CustomFormField
-                  name="squareFeet"
-                  label="Square Feet"
-                  type="number"
-                />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                <CustomFormField
-                  name="isPetsAllowed"
-                  label="Pets Allowed"
-                  type="switch"
-                />
-                <CustomFormField
-                  name="isParkingIncluded"
-                  label="Parking Included"
-                  type="switch"
-                />
-              </div>
-              <div className="mt-4">
-                <CustomFormField
-                  name="propertyType"
-                  label="Property Type"
-                  type="select"
-                  options={Object.keys(PropertyTypeEnum).map((type) => ({
-                    value: type,
-                    label: type,
-                  }))}
-                />
-              </div>
+          <Section
+            title="Pricing"
+            description="Renters see all fees up front, so keep them accurate."
+          >
+            <div className="grid gap-5 sm:grid-cols-3">
+              <CustomFormField name="pricePerMonth" label="Monthly rent" type="number" prefix="$" min={0} />
+              <CustomFormField name="securityDeposit" label="Security deposit" type="number" prefix="$" min={0} />
+              <CustomFormField name="applicationFee" label="Application fee" type="number" prefix="$" min={0} />
             </div>
+          </Section>
 
-            <hr className="my-6 border-gray-200" />
+          <Section
+            title="Amenities & highlights"
+            description="Select everything that applies. These power the search filters."
+          >
+            <CustomFormField
+              name="amenities"
+              label="Amenities"
+              type="multi-select"
+              options={AMENITIES.map((a) => ({
+                value: a,
+                label: formatEnumString(a),
+                icon: AmenityIcons[a],
+              }))}
+            />
+            <CustomFormField
+              name="highlights"
+              label="Highlights"
+              type="multi-select"
+              options={HIGHLIGHTS.map((h) => ({
+                value: h,
+                label: formatEnumString(h),
+                icon: HighlightIcons[h],
+              }))}
+            />
+          </Section>
 
-            {/* Amenities and Highlights */}
-            <div>
-              <h2 className="text-lg font-semibold mb-4">
-                Amenities and Highlights
-              </h2>
-              <div className="space-y-6">
-                <CustomFormField
-                  name="amenities"
-                  label="Amenities"
-                  type="select"
-                  options={Object.keys(AmenityEnum).map((amenity) => ({
-                    value: amenity,
-                    label: amenity,
-                  }))}
-                />
-                <CustomFormField
-                  name="highlights"
-                  label="Highlights"
-                  type="select"
-                  options={Object.keys(HighlightEnum).map((highlight) => ({
-                    value: highlight,
-                    label: highlight,
-                  }))}
-                />
-              </div>
+          <Section
+            title="Photos"
+            description="Listings with 4+ bright photos get roughly twice as many applications."
+          >
+            <CustomFormField name="photoUrls" label="Upload photos" type="file" />
+          </Section>
+
+          <Section
+            title="Address"
+            description="We'll place the home on the map from this address."
+          >
+            <CustomFormField name="address" label="Street address" placeholder="2412 Griffith Park Blvd" />
+            <div className="grid gap-5 sm:grid-cols-3">
+              <CustomFormField name="city" label="City" placeholder="Los Angeles" />
+              <CustomFormField name="state" label="State" placeholder="CA" />
+              <CustomFormField name="postalCode" label="Postal code" placeholder="90039" />
             </div>
+            <CustomFormField name="country" label="Country" />
+          </Section>
 
-            <hr className="my-6 border-gray-200" />
-
-            {/* Photos */}
-            <div>
-              <h2 className="text-lg font-semibold mb-4">Photos</h2>
-              <CustomFormField
-                name="photoUrls"
-                label="Property Photos"
-                type="file"
-                accept="image/*"
-              />
-            </div>
-
-            <hr className="my-6 border-gray-200" />
-
-            {/* Additional Information */}
-            <div className="space-y-6">
-              <h2 className="text-lg font-semibold mb-4">
-                Additional Information
-              </h2>
-              <CustomFormField name="address" label="Address" />
-              <div className="flex justify-between gap-4">
-                <CustomFormField name="city" label="City" className="w-full" />
-                <CustomFormField
-                  name="state"
-                  label="State"
-                  className="w-full"
-                />
-                <CustomFormField
-                  name="postalCode"
-                  label="Postal Code"
-                  className="w-full"
-                />
-              </div>
-              <CustomFormField name="country" label="Country" />
-            </div>
-
-            <Button
-              type="submit"
-              className="bg-primary-700 text-white w-full mt-8"
-            >
-              Create Property
+          <div className="flex flex-col-reverse gap-3 pt-8 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-xs text-ink-faint">
+              By publishing you confirm the information is accurate and you have the right to rent this property.
+            </p>
+            <Button type="submit" size="lg" disabled={submitting} className="sm:min-w-48">
+              {submitting ? <Loader2 className="animate-spin" /> : <Sparkles />}
+              Publish listing
             </Button>
-          </form>
-        </Form>
-      </div>
+          </div>
+        </form>
+      </Form>
     </div>
   );
 };

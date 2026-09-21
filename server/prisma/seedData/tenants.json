@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "cognitoId": "tnt-carol-white",
+    "name": "Carol White",
+    "email": "carol@rentiful.dev",
+    "phoneNumber": "(323) 555-0119"
+  },
+  {
+    "id": 2,
+    "cognitoId": "tnt-ahmed-hassan",
+    "name": "Ahmed Hassan",
+    "email": "ahmed@rentiful.dev",
+    "phoneNumber": "(424) 555-0164"
+  },
+  {
+    "id": 3,
+    "cognitoId": "tnt-sofia-rossi",
+    "name": "Sofia Rossi",
+    "email": "sofia@rentiful.dev",
+    "phoneNumber": "(213) 555-0151"
+  },
+  {
+    "id": 4,
+    "cognitoId": "tnt-liam-oconnor",
+    "name": "Liam O'Connor",
+    "email": "liam@rentiful.dev",
+    "phoneNumber": "(818) 555-0187"
+  },
+  {
+    "id": 5,
+    "cognitoId": "tnt-mei-tanaka",
+    "name": "Mei Tanaka",
+    "email": "mei@rentiful.dev",
+    "phoneNumber": "(626) 555-0122"
+  },
+  {
+    "id": 6,
+    "cognitoId": "tnt-jonas-berg",
+    "name": "Jonas Berg",
+    "email": "jonas@rentiful.dev",
+    "phoneNumber": "(310) 555-0106"
+  }
+]

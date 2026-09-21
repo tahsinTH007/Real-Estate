@@ -7,20 +7,25 @@ export interface FiltersState {
   propertyType: string;
   amenities: string[];
   availableFrom: string;
-  priceRange: [number, number] | [null, null];
-  squareFeet: [number, number] | [null, null];
-  coordinates: [number, number];
+  priceRange: [number | null, number | null];
+  squareFeet: [number | null, number | null];
+  coordinates: [number, number]; // [lng, lat]
 }
+
+export type SortBy = "recommended" | "price-asc" | "price-desc" | "newest" | "rating";
 
 interface InitialStateTypes {
   filters: FiltersState;
   isFiltersFullOpen: boolean;
   viewMode: "grid" | "list";
+  sortBy: SortBy;
+  /** Property currently hovered in the list / map, for cross-highlighting. */
+  activePropertyId: number | null;
 }
 
 export const initialState: InitialStateTypes = {
   filters: {
-    location: "Los Angeles",
+    location: "Los Angeles, CA",
     beds: "any",
     baths: "any",
     propertyType: "any",
@@ -28,10 +33,12 @@ export const initialState: InitialStateTypes = {
     availableFrom: "any",
     priceRange: [null, null],
     squareFeet: [null, null],
-    coordinates: [-118.25, 34.05],
+    coordinates: [-118.2437, 34.0522],
   },
   isFiltersFullOpen: false,
-  viewMode: "grid",
+  viewMode: "list",
+  sortBy: "recommended",
+  activePropertyId: null,
 };
 
 export const globalSlice = createSlice({
@@ -41,16 +48,39 @@ export const globalSlice = createSlice({
     setFilters: (state, action: PayloadAction<Partial<FiltersState>>) => {
       state.filters = { ...state.filters, ...action.payload };
     },
+    resetFilters: (state) => {
+      state.filters = {
+        ...initialState.filters,
+        location: state.filters.location,
+        coordinates: state.filters.coordinates,
+      };
+    },
     toggleFiltersFullOpen: (state) => {
       state.isFiltersFullOpen = !state.isFiltersFullOpen;
+    },
+    setFiltersFullOpen: (state, action: PayloadAction<boolean>) => {
+      state.isFiltersFullOpen = action.payload;
     },
     setViewMode: (state, action: PayloadAction<"grid" | "list">) => {
       state.viewMode = action.payload;
     },
+    setSortBy: (state, action: PayloadAction<SortBy>) => {
+      state.sortBy = action.payload;
+    },
+    setActiveProperty: (state, action: PayloadAction<number | null>) => {
+      state.activePropertyId = action.payload;
+    },
   },
 });
 
-export const { setFilters, toggleFiltersFullOpen, setViewMode } =
-  globalSlice.actions;
+export const {
+  setFilters,
+  resetFilters,
+  toggleFiltersFullOpen,
+  setFiltersFullOpen,
+  setViewMode,
+  setSortBy,
+  setActiveProperty,
+} = globalSlice.actions;
 
 export default globalSlice.reducer;

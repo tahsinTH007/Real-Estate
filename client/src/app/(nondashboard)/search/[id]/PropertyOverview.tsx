@@ -1,109 +1,66 @@
-import { useGetPropertyQuery } from "@/state/api";
-import { MapPin, Star } from "lucide-react";
-import React from "react";
+"use client";
 
-const PropertyOverview = ({ propertyId }: PropertyOverviewProps) => {
-  const {
-    data: property,
-    isError,
-    isLoading,
-  } = useGetPropertyQuery(propertyId);
+import { Bath, BedDouble, CalendarClock, MapPin, Ruler, ShieldCheck, Star } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { PropertyTypeLabels } from "@/lib/constants";
+import { bedsLabel, formatDate } from "@/lib/utils";
+import type { Property } from "@/types/models";
 
-  if (isLoading) return <>Loading...</>;
-  if (isError || !property) {
-    return <>Property not Found</>;
-  }
+const PropertyOverview = ({ property }: { property: Property }) => {
+  const facts = [
+    { icon: BedDouble, label: "Bedrooms", value: bedsLabel(property.beds) },
+    { icon: Bath, label: "Bathrooms", value: `${property.baths} ${property.baths === 1 ? "bath" : "baths"}` },
+    { icon: Ruler, label: "Size", value: `${property.squareFeet.toLocaleString()} sq ft` },
+    { icon: CalendarClock, label: "Listed", value: formatDate(property.postedDate, { month: "short", day: "numeric" }) },
+  ];
 
   return (
-    <div>
-      {/* Header */}
-      <div className="mb-4">
-        <div className="text-sm text-gray-500 mb-1">
-          {property.location?.country} / {property.location?.state} /{" "}
-          <span className="font-semibold text-gray-600">
-            {property.location?.city}
-          </span>
-        </div>
-        <h1 className="text-3xl font-bold my-5">{property.name}</h1>
-        <div className="flex justify-between items-center">
-          <span className="flex items-center text-gray-500">
-            <MapPin className="w-4 h-4 mr-1 text-gray-700" />
-            {property.location?.city}, {property.location?.state},{" "}
-            {property.location?.country}
-          </span>
-          <div className="flex justify-between items-center gap-3">
-            <span className="flex items-center text-yellow-500">
-              <Star className="w-4 h-4 mr-1 fill-current" />
-              {property.averageRating.toFixed(1)} ({property.numberOfReviews}{" "}
-              Reviews)
+    <section>
+      <div className="flex flex-wrap items-center gap-2">
+        <Badge variant="secondary">{PropertyTypeLabels[property.propertyType]}</Badge>
+        <Badge variant="success">
+          <ShieldCheck className="h-3 w-3" /> Verified listing
+        </Badge>
+      </div>
+
+      <h1 className="mt-4 font-display text-3xl font-medium tracking-tight text-ink sm:text-4xl">
+        {property.name}
+      </h1>
+
+      <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-ink-muted">
+        <span className="flex items-center gap-1.5">
+          <MapPin className="h-4 w-4 text-ink-faint" />
+          {property.location.address}, {property.location.city}, {property.location.state}{" "}
+          {property.location.postalCode}
+        </span>
+        {!!property.averageRating && (
+          <span className="flex items-center gap-1.5 font-medium text-ink">
+            <Star className="h-4 w-4 fill-accent-400 text-accent-400" />
+            {property.averageRating.toFixed(1)}
+            <span className="font-normal text-ink-soft">
+              ({property.numberOfReviews ?? 0} reviews)
             </span>
-            <span className="text-green-600">Verified Listing</span>
-          </div>
-        </div>
+          </span>
+        )}
       </div>
 
-      {/* Details */}
-      <div className="border border-primary-200 rounded-xl p-6 mb-6">
-        <div className="flex justify-between items-center gap-4 px-5">
-          <div>
-            <div className="text-sm text-gray-500">Monthly Rent</div>
-            <div className="font-semibold">
-              ${property.pricePerMonth.toLocaleString()}
-            </div>
+      <dl className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {facts.map((f) => (
+          <div key={f.label} className="rounded-2xl border border-sand-200 bg-white p-4">
+            <f.icon className="mb-2 h-5 w-5 text-brand-700" />
+            <dt className="text-xs text-ink-soft">{f.label}</dt>
+            <dd className="mt-0.5 text-sm font-semibold text-ink">{f.value}</dd>
           </div>
-          <div className="border-l border-gray-300 h-10"></div>
-          <div>
-            <div className="text-sm text-gray-500">Bedrooms</div>
-            <div className="font-semibold">{property.beds} bd</div>
-          </div>
-          <div className="border-l border-gray-300 h-10"></div>
-          <div>
-            <div className="text-sm text-gray-500">Bathrooms</div>
-            <div className="font-semibold">{property.baths} ba</div>
-          </div>
-          <div className="border-l border-gray-300 h-10"></div>
-          <div>
-            <div className="text-sm text-gray-500">Square Feet</div>
-            <div className="font-semibold">
-              {property.squareFeet.toLocaleString()} sq ft
-            </div>
-          </div>
-        </div>
-      </div>
+        ))}
+      </dl>
 
-      {/* Summary */}
-      <div className="my-16">
-        <h2 className="text-xl font-semibold mb-5">About {property.name}</h2>
-        <p className="text-gray-500 leading-7">
+      <div className="mt-10">
+        <h2 className="text-lg font-semibold text-ink">About this home</h2>
+        <p className="mt-3 whitespace-pre-line text-[15px] leading-7 text-ink-muted">
           {property.description}
-          Experience resort style luxury living at Seacrest Homes, where the
-          ocean and city are seamlessly intertwined. Our newly built community
-          features sophisticated two and three-bedroom residences, each complete
-          with high end designer finishes, quartz counter tops, stainless steel
-          whirlpool appliances, office nook, and a full size in-unit washer and
-          dryer. Find your personal escape at home beside stunning swimming
-          pools and spas with poolside cabanas. Experience your very own oasis
-          surrounded by lavish landscaped courtyards, with indoor/outdoor
-          entertainment seating. By day, lounge in the BBQ area and experience
-          the breath taking unobstructed views stretching from the Palos Verdes
-          Peninsula to Downtown Los Angeles, or watch the beauty of the South
-          Bay skyline light up by night. Start or end your day with a workout in
-          our full-size state of the art fitness club and yoga studio. Save the
-          commute and plan your next meeting in the business centers conference
-          room, adjacent to our internet and coffee lounge. Conveniently located
-          near beautiful local beaches with easy access to the 110, 405 and 91
-          freeways, exclusive shopping at the largest mall in the Western United
-          States “The Del Amo Fashion Center” to the hospital of your choice,
-          Kaiser Hospital, UCLA Harbor Medical Center, Torrance Memorial Medical
-          Center, and Providence Little Company of Mary Hospital Torrance rated
-          one of the top 10 Best in Los Angeles. Contact us today to tour and
-          embrace the Seacrest luxury lifestyle as your own. Seacrest Homes
-          Apartments is an apartment community located in Los Angeles County and
-          the 90501 ZIP Code. This area is served by the Los Angeles Unified
-          attendance zone.
         </p>
       </div>
-    </div>
+    </section>
   );
 };
 

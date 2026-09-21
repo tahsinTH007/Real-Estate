@@ -1,144 +1,153 @@
-import { Mail, MapPin, PhoneCall } from "lucide-react";
-import Image from "next/image";
-import React, { useState } from "react";
+"use client";
+
+import Link from "next/link";
+import { CalendarDays, Mail, MapPin, MessageSquareQuote, Phone } from "lucide-react";
+import PropertyImage from "@/components/PropertyImage";
+import StatusBadge from "@/components/StatusBadge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { cn, formatCurrency, formatDate, initials } from "@/lib/utils";
+import type { Application } from "@/types/models";
 
 interface ApplicationCardProps {
-  application: {
-    id: string;
-    property: {
-      id: string;
-      name: string;
-      location: {
-        city: string;
-        country: string;
-      };
-      pricePerMonth: number;
-      photoUrls?: string[];
-    };  
-  };
+  application: Application;
+  /** Whose perspective the card is rendered from. */
   userType: "manager" | "tenant";
+  propertyLink?: string;
   children?: React.ReactNode;
+  className?: string;
 }
 
 const ApplicationCard = ({
   application,
   userType,
+  propertyLink,
   children,
+  className,
 }: ApplicationCardProps) => {
-  const [imgSrc, setImgSrc] = useState(
-    application.property.photoUrls?.[0] || "/placeholder.jpg"
-  );
-
-  const statusColor =
-    application.status === "Approved"
-      ? "bg-green-500"
-      : application.status === "Denied"
-      ? "bg-red-500"
-      : "bg-yellow-500";
-
-  const contactPerson =
-    userType === "manager" ? application.tenant : application.manager;
+  const { property, lease } = application;
+  const contact = userType === "manager" ? application.tenant : application.manager;
+  const contactRole = userType === "manager" ? "Applicant" : "Property manager";
 
   return (
-    <div className="border rounded-xl overflow-hidden shadow-sm bg-white mb-4">
-      <div className="flex flex-col lg:flex-row  items-start lg:items-center justify-between px-6 md:px-4 py-6 gap-6 lg:gap-4">
-        {/* Property Info Section */}
-        <div className="flex flex-col lg:flex-row gap-5 w-full lg:w-auto">
-          <Image
-            src={imgSrc}
-            alt={application.property.name}
-            width={200}
-            height={150}
-            className="rounded-xl object-cover w-full lg:w-[200px] h-[150px]"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            onError={() => setImgSrc("/placeholder.jpg")}
-          />
-          <div className="flex flex-col justify-between">
-            <div>
-              <h2 className="text-xl font-bold my-2">
-                {application.property.name}
-              </h2>
-              <div className="flex items-center mb-2">
-                <MapPin className="w-5 h-5 mr-1" />
-                <span>{`${application.property.location.city}, ${application.property.location.country}`}</span>
-              </div>
-            </div>
-            <div className="text-xl font-semibold">
-              ${application.property.pricePerMonth}{" "}
-              <span className="text-sm font-normal">/ month</span>
-            </div>
+    <article className={cn("surface overflow-hidden", className)}>
+      <div className="grid gap-6 p-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_minmax(0,1fr)] lg:gap-8 lg:p-6">
+        {/* Property */}
+        <div className="flex gap-4">
+          <div className="relative h-24 w-32 shrink-0 overflow-hidden rounded-xl bg-sand-100 sm:h-28 sm:w-40">
+            <PropertyImage
+              src={property.photoUrls?.[0]}
+              alt={property.name}
+              fill
+              className="object-cover"
+              sizes="160px"
+            />
           </div>
-        </div>
-
-        {/* Divider - visible only on desktop */}
-        <div className="hidden lg:block border-[0.5px] border-primary-200 h-48" />
-
-        {/* Status Section */}
-        <div className="flex flex-col justify-between w-full lg:basis-2/12 lg:h-48 py-2 gap-3 lg:gap-0">
-          <div>
-            <div className="flex justify-between items-center">
-              <span className="text-gray-500">Status:</span>
-              <span
-                className={`px-2 py-1 ${statusColor} text-white rounded-full text-sm`}
-              >
-                {application.status}
+          <div className="min-w-0">
+            <div className="mb-1.5 flex flex-wrap items-center gap-2">
+              <StatusBadge status={application.status} />
+              <span className="text-xs text-ink-faint">
+                Applied {formatDate(application.applicationDate)}
               </span>
             </div>
-            <hr className="mt-3" />
-          </div>
-          <div className="flex justify-between">
-            <span className="text-gray-500">Start Date:</span>{" "}
-            {new Date(application.lease?.startDate).toLocaleDateString()}
-          </div>
-          <div className="flex justify-between">
-            <span className="text-gray-500">End Date:</span>{" "}
-            {new Date(application.lease?.endDate).toLocaleDateString()}
-          </div>
-          <div className="flex justify-between">
-            <span className="text-gray-500">Next Payment:</span>{" "}
-            {new Date(application.lease?.nextPaymentDate).toLocaleDateString()}
+            <h3 className="line-clamp-1 text-base font-semibold text-ink">
+              {propertyLink ? (
+                <Link href={propertyLink} className="hover:text-brand-700">
+                  {property.name}
+                </Link>
+              ) : (
+                property.name
+              )}
+            </h3>
+            <p className="mt-0.5 flex items-center gap-1 text-xs text-ink-soft">
+              <MapPin className="h-3.5 w-3.5" />
+              {property.location?.city}, {property.location?.state}
+            </p>
+            <p className="mt-2 text-sm font-semibold text-ink">
+              {formatCurrency(property.pricePerMonth)}
+              <span className="text-xs font-normal text-ink-soft"> /month</span>
+            </p>
           </div>
         </div>
 
-        {/* Divider - visible only on desktop */}
-        <div className="hidden lg:block border-[0.5px] border-primary-200 h-48" />
+        {/* Lease */}
+        <div className="border-t border-sand-200 pt-5 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-ink-soft">
+            Lease
+          </p>
+          {lease ? (
+            <dl className="space-y-2 text-sm">
+              <div className="flex justify-between gap-3">
+                <dt className="text-ink-soft">Start</dt>
+                <dd className="font-medium text-ink">{formatDate(lease.startDate)}</dd>
+              </div>
+              <div className="flex justify-between gap-3">
+                <dt className="text-ink-soft">End</dt>
+                <dd className="font-medium text-ink">{formatDate(lease.endDate)}</dd>
+              </div>
+              <div className="flex justify-between gap-3">
+                <dt className="text-ink-soft">Next payment</dt>
+                <dd className="flex items-center gap-1 font-medium text-ink">
+                  <CalendarDays className="h-3.5 w-3.5 text-ink-faint" />
+                  {formatDate(lease.nextPaymentDate)}
+                </dd>
+              </div>
+            </dl>
+          ) : (
+            <p className="text-sm text-ink-soft">
+              {application.status === "Denied"
+                ? "No lease was created."
+                : "A lease is created once the application is approved."}
+            </p>
+          )}
+        </div>
 
-        {/* Contact Person Section */}
-        <div className="flex flex-col justify-start gap-5 w-full lg:basis-3/12 lg:h-48 py-2">
-          <div>
-            <div className="text-lg font-semibold">
-              {userType === "manager" ? "Tenant" : "Manager"}
-            </div>
-            <hr className="mt-3" />
-          </div>
-          <div className="flex gap-4">
-            <div>
-              <Image
-                src="/landing-i1.png"
-                alt={contactPerson.name}
-                width={40}
-                height={40}
-                className="rounded-full mr-2 min-w-[40px] min-h-[40px]"
-              />
-            </div>
-            <div className="flex flex-col gap-2">
-              <div className="font-semibold">{contactPerson.name}</div>
-              <div className="text-sm flex items-center text-primary-600">
-                <PhoneCall className="w-5 h-5 mr-2" />
-                {contactPerson.phoneNumber}
+        {/* Contact */}
+        <div className="border-t border-sand-200 pt-5 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-ink-soft">
+            {contactRole}
+          </p>
+          {contact ? (
+            <div className="flex gap-3">
+              <Avatar className="h-10 w-10">
+                <AvatarFallback>{initials(contact.name)}</AvatarFallback>
+              </Avatar>
+              <div className="min-w-0 space-y-1 text-sm">
+                <p className="font-semibold text-ink">{contact.name}</p>
+                {contact.phoneNumber && (
+                  <a
+                    href={`tel:${contact.phoneNumber}`}
+                    className="flex items-center gap-1.5 text-ink-muted hover:text-brand-700"
+                  >
+                    <Phone className="h-3.5 w-3.5" /> {contact.phoneNumber}
+                  </a>
+                )}
+                <a
+                  href={`mailto:${contact.email}`}
+                  className="flex items-center gap-1.5 truncate text-ink-muted hover:text-brand-700"
+                >
+                  <Mail className="h-3.5 w-3.5" /> {contact.email}
+                </a>
               </div>
-              <div className="text-sm flex items-center text-primary-600">
-                <Mail className="w-5 h-5 mr-2" />
-                {contactPerson.email}
-              </div>
             </div>
-          </div>
+          ) : (
+            <p className="text-sm text-ink-soft">Unavailable</p>
+          )}
         </div>
       </div>
 
-      <hr className="my-4" />
-      {children}
-    </div>
+      {application.message && userType === "manager" && (
+        <div className="mx-5 mb-5 flex gap-2.5 rounded-xl bg-sand-50 px-4 py-3 text-sm text-ink-muted lg:mx-6">
+          <MessageSquareQuote className="mt-0.5 h-4 w-4 shrink-0 text-ink-faint" />
+          <p className="italic">“{application.message}”</p>
+        </div>
+      )}
+
+      {children && (
+        <div className="border-t border-sand-200 bg-sand-50/60 px-5 py-4 lg:px-6">
+          {children}
+        </div>
+      )}
+    </article>
   );
 };
 

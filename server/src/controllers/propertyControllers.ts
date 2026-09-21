@@ -12,6 +12,9 @@ const s3Client = new S3Client({
   region: process.env.AWS_REGION,
 });
 
+/** Search radius for the lat/lng filter, in kilometres. */
+const SEARCH_RADIUS_KM = 80;
+
 export const getProperties = async (
   req: Request,
   res: Response,
@@ -32,13 +35,18 @@ export const getProperties = async (
       longitude,
     } = req.query;
 
-    let whereConditions: Prisma.Sql[] = [];
+    const whereConditions: Prisma.Sql[] = [];
 
     if (favoriteIds) {
-      const favoriteIdsArray = (favoriteIds as string).split(",").map(Number);
-      whereConditions.push(
-        Prisma.sql`p.id IN (${Prisma.join(favoriteIdsArray)})`,
-      );
+      const favoriteIdsArray = (favoriteIds as string)
+        .split(",")
+        .map(Number)
+        .filter((n) => Number.isFinite(n));
+      if (favoriteIdsArray.length) {
+        whereConditions.push(
+          Prisma.sql`p.id IN (${Prisma.join(favoriteIdsArray)})`,
+        );
+      }
     }
 
     if (priceMin) {
@@ -80,44 +88,46 @@ export const getProperties = async (
     }
 
     if (amenities && amenities !== "any") {
-      const amenitiesArray = (amenities as string).split(",");
-      whereConditions.push(Prisma.sql`p.amenities @> ${amenitiesArray}`);
-    }
-
-    if (availableFrom && availableFrom !== "any") {
-      const availableFromDate =
-        typeof availableFrom === "string" ? availableFrom : null;
-      if (availableFromDate) {
-        const date = new Date(availableFromDate);
-        if (!isNaN(date.getTime())) {
-          whereConditions.push(
-            Prisma.sql`EXISTS (
-              SELECT 1 FROM "Lease" l 
-              WHERE l."propertyId" = p.id 
-              AND l."startDate" <= ${date.toISOString()}
-            )`,
-          );
-        }
+      const amenitiesArray = (amenities as string).split(",").filter(Boolean);
+      if (amenitiesArray.length) {
+        whereConditions.push(
+          Prisma.sql`p.amenities @> ${amenitiesArray}::"Amenity"[]`,
+        );
       }
     }
 
-    if (latitude && longitude) {
+    // Only homes with no lease covering the requested move-in date.
+    if (availableFrom && availableFrom !== "any") {
+      const date = new Date(String(availableFrom));
+      if (!isNaN(date.getTime())) {
+        whereConditions.push(
+          Prisma.sql`NOT EXISTS (
+            SELECT 1 FROM "Lease" l2
+            WHERE l2."propertyId" = p.id
+            AND l2."startDate" <= ${date}
+            AND l2."endDate" >= ${date}
+          )`,
+        );
+      }
+    }
+
+    // Skip the geo filter when fetching an explicit favourites list.
+    if (latitude && longitude && !favoriteIds) {
       const lat = parseFloat(latitude as string);
       const lng = parseFloat(longitude as string);
-      const radiusInKilometers = 1000;
-      const degrees = radiusInKilometers / 111; // Converts kilometers to degrees
-
-      whereConditions.push(
-        Prisma.sql`ST_DWithin(
-          l.coordinates::geometry,
-          ST_SetSRID(ST_MakePoint(${lng}, ${lat}), 4326),
-          ${degrees}
-        )`,
-      );
+      if (Number.isFinite(lat) && Number.isFinite(lng)) {
+        whereConditions.push(
+          Prisma.sql`ST_DWithin(
+            l.coordinates,
+            ST_SetSRID(ST_MakePoint(${lng}, ${lat}), 4326)::geography,
+            ${SEARCH_RADIUS_KM * 1000}
+          )`,
+        );
+      }
     }
 
     const completeQuery = Prisma.sql`
-      SELECT 
+      SELECT
         p.*,
         json_build_object(
           'id', l.id,
@@ -130,14 +140,23 @@ export const getProperties = async (
             'longitude', ST_X(l."coordinates"::geometry),
             'latitude', ST_Y(l."coordinates"::geometry)
           )
-        ) as location
+        ) as location,
+        json_build_object(
+          'id', m.id,
+          'cognitoId', m."cognitoId",
+          'name', m.name,
+          'email', m.email,
+          'phoneNumber', m."phoneNumber"
+        ) as manager
       FROM "Property" p
       JOIN "Location" l ON p."locationId" = l.id
+      JOIN "Manager" m ON p."managerCognitoId" = m."cognitoId"
       ${
         whereConditions.length > 0
           ? Prisma.sql`WHERE ${Prisma.join(whereConditions, " AND ")}`
           : Prisma.empty
       }
+      ORDER BY p."postedDate" DESC
     `;
 
     const properties = await prisma.$queryRaw(completeQuery);
@@ -160,33 +179,52 @@ export const getProperty = async (
       where: { id: Number(id) },
       include: {
         location: true,
+        manager: true,
       },
     });
 
-    if (property) {
-      const coordinates: { coordinates: string }[] =
-        await prisma.$queryRaw`SELECT ST_asText(coordinates) as coordinates from "Location" where id = ${property.location.id}`;
-
-      const geoJSON: any = wktToGeoJSON(coordinates[0]?.coordinates || "");
-      const longitude = geoJSON.coordinates[0];
-      const latitude = geoJSON.coordinates[1];
-
-      const propertyWithCoordinates = {
-        ...property,
-        location: {
-          ...property.location,
-          coordinates: {
-            longitude,
-            latitude,
-          },
-        },
-      };
-      res.json(propertyWithCoordinates);
+    if (!property) {
+      res.status(404).json({ message: "Property not found" });
+      return;
     }
+
+    const coordinates: { coordinates: string }[] =
+      await prisma.$queryRaw`SELECT ST_asText(coordinates) as coordinates from "Location" where id = ${property.location.id}`;
+
+    const geoJSON: any = wktToGeoJSON(coordinates[0]?.coordinates || "");
+    const longitude = geoJSON.coordinates[0];
+    const latitude = geoJSON.coordinates[1];
+
+    res.json({
+      ...property,
+      location: {
+        ...property.location,
+        coordinates: { longitude, latitude },
+      },
+    });
   } catch (err: any) {
     res
       .status(500)
       .json({ message: `Error retrieving property: ${err.message}` });
+  }
+};
+
+export const getPropertyLeases = async (
+  req: Request,
+  res: Response,
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const leases = await prisma.lease.findMany({
+      where: { propertyId: Number(id) },
+      include: { tenant: true, payments: true },
+      orderBy: { startDate: "desc" },
+    });
+    res.json(leases);
+  } catch (err: any) {
+    res
+      .status(500)
+      .json({ message: `Error retrieving property leases: ${err.message}` });
   }
 };
 
@@ -195,7 +233,7 @@ export const createProperty = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const files = req.files as Express.Multer.File[];
+    const files = (req.files as Express.Multer.File[]) ?? [];
     const {
       address,
       city,
@@ -203,6 +241,8 @@ export const createProperty = async (
       country,
       postalCode,
       managerCognitoId,
+      latitude: latitudeInput,
+      longitude: longitudeInput,
       ...propertyData
     } = req.body;
 
@@ -224,28 +264,30 @@ export const createProperty = async (
       }),
     );
 
-    const geocodingUrl = `https://nominatim.openstreetmap.org/search?${new URLSearchParams(
-      {
-        street: address,
-        city,
-        country,
-        postalcode: postalCode,
-        format: "json",
-        limit: "1",
-      },
-    ).toString()}`;
-    const geocodingResponse = await axios.get(geocodingUrl, {
-      headers: {
-        "User-Agent": "RealEstateApp (justsomedummyemail@gmail.com",
-      },
-    });
-    const [longitude, latitude] =
-      geocodingResponse.data[0]?.lon && geocodingResponse.data[0]?.lat
-        ? [
-            parseFloat(geocodingResponse.data[0]?.lon),
-            parseFloat(geocodingResponse.data[0]?.lat),
-          ]
-        : [0, 0];
+    // Prefer coordinates supplied by the client; otherwise geocode the address.
+    let longitude = parseFloat(longitudeInput);
+    let latitude = parseFloat(latitudeInput);
+
+    if (!Number.isFinite(longitude) || !Number.isFinite(latitude) || (longitude === 0 && latitude === 0)) {
+      const geocodingUrl = `https://nominatim.openstreetmap.org/search?${new URLSearchParams(
+        {
+          street: address,
+          city,
+          country,
+          postalcode: postalCode,
+          format: "json",
+          limit: "1",
+        },
+      ).toString()}`;
+      const geocodingResponse = await axios.get(geocodingUrl, {
+        headers: {
+          "User-Agent": "RentifulApp (contact@rentiful.dev)",
+        },
+      });
+      const hit = geocodingResponse.data[0];
+      longitude = hit?.lon ? parseFloat(hit.lon) : 0;
+      latitude = hit?.lat ? parseFloat(hit.lat) : 0;
+    }
 
     // create location
     const [location] = await prisma.$queryRaw<Location[]>`
@@ -254,21 +296,22 @@ export const createProperty = async (
       RETURNING id, address, city, state, country, "postalCode", ST_AsText(coordinates) as coordinates;
     `;
 
+    const toList = (value: unknown) =>
+      typeof value === "string"
+        ? value.split(",").map((s) => s.trim()).filter(Boolean)
+        : [];
+
     // create property
     const newProperty = await prisma.property.create({
       data: {
-        ...propertyData,
+        name: propertyData.name,
+        description: propertyData.description,
+        propertyType: propertyData.propertyType,
         photoUrls,
         locationId: location.id,
         managerCognitoId,
-        amenities:
-          typeof propertyData.amenities === "string"
-            ? propertyData.amenities.split(",")
-            : [],
-        highlights:
-          typeof propertyData.highlights === "string"
-            ? propertyData.highlights.split(",")
-            : [],
+        amenities: toList(propertyData.amenities) as any,
+        highlights: toList(propertyData.highlights) as any,
         isPetsAllowed: propertyData.isPetsAllowed === "true",
         isParkingIncluded: propertyData.isParkingIncluded === "true",
         pricePerMonth: parseFloat(propertyData.pricePerMonth),
@@ -284,7 +327,13 @@ export const createProperty = async (
       },
     });
 
-    res.status(201).json(newProperty);
+    res.status(201).json({
+      ...newProperty,
+      location: {
+        ...newProperty.location,
+        coordinates: { longitude, latitude },
+      },
+    });
   } catch (err: any) {
     res
       .status(500)

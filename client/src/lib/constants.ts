@@ -1,54 +1,61 @@
 import {
-  Wifi,
-  Waves,
-  Dumbbell,
-  Car,
-  PawPrint,
-  Tv,
-  Thermometer,
-  Cigarette,
-  Cable,
-  Maximize,
   Bath,
-  Phone,
-  Sprout,
-  Hammer,
+  Building2,
   Bus,
-  Mountain,
-  VolumeX,
-  Home,
-  Warehouse,
-  Building,
+  Cable,
+  Car,
   Castle,
-  Trees,
+  CigaretteOff,
+  Dumbbell,
+  Flame,
+  Hammer,
+  Home,
   LucideIcon,
+  Maximize,
+  Microwave,
+  Mountain,
+  PawPrint,
+  Phone,
+  Refrigerator,
+  Rows3,
+  Snowflake,
+  Sprout,
+  Trees,
+  Tv,
+  Utensils,
+  VolumeX,
+  Warehouse,
+  WashingMachine,
+  Waves,
+  Wifi,
 } from "lucide-react";
+import type { Amenity, Highlight, PropertyType } from "@/types/models";
 
-export enum AmenityEnum {
-  WasherDryer = "WasherDryer",
-  AirConditioning = "AirConditioning",
-  Dishwasher = "Dishwasher",
-  HighSpeedInternet = "HighSpeedInternet",
-  HardwoodFloors = "HardwoodFloors",
-  WalkInClosets = "WalkInClosets",
-  Microwave = "Microwave",
-  Refrigerator = "Refrigerator",
-  Pool = "Pool",
-  Gym = "Gym",
-  Parking = "Parking",
-  PetsAllowed = "PetsAllowed",
-  WiFi = "WiFi",
-}
+export const AMENITIES: Amenity[] = [
+  "WasherDryer",
+  "AirConditioning",
+  "Dishwasher",
+  "HighSpeedInternet",
+  "HardwoodFloors",
+  "WalkInClosets",
+  "Microwave",
+  "Refrigerator",
+  "Pool",
+  "Gym",
+  "Parking",
+  "PetsAllowed",
+  "WiFi",
+];
 
-export const AmenityIcons: Record<AmenityEnum, LucideIcon> = {
-  WasherDryer: Waves,
-  AirConditioning: Thermometer,
-  Dishwasher: Waves,
+export const AmenityIcons: Record<Amenity, LucideIcon> = {
+  WasherDryer: WashingMachine,
+  AirConditioning: Snowflake,
+  Dishwasher: Utensils,
   HighSpeedInternet: Wifi,
-  HardwoodFloors: Home,
+  HardwoodFloors: Rows3,
   WalkInClosets: Maximize,
-  Microwave: Tv,
-  Refrigerator: Thermometer,
+  Microwave: Microwave,
+  Refrigerator: Refrigerator,
   Pool: Waves,
   Gym: Dumbbell,
   Parking: Car,
@@ -56,30 +63,30 @@ export const AmenityIcons: Record<AmenityEnum, LucideIcon> = {
   WiFi: Wifi,
 };
 
-export enum HighlightEnum {
-  HighSpeedInternetAccess = "HighSpeedInternetAccess",
-  WasherDryer = "WasherDryer",
-  AirConditioning = "AirConditioning",
-  Heating = "Heating",
-  SmokeFree = "SmokeFree",
-  CableReady = "CableReady",
-  SatelliteTV = "SatelliteTV",
-  DoubleVanities = "DoubleVanities",
-  TubShower = "TubShower",
-  Intercom = "Intercom",
-  SprinklerSystem = "SprinklerSystem",
-  RecentlyRenovated = "RecentlyRenovated",
-  CloseToTransit = "CloseToTransit",
-  GreatView = "GreatView",
-  QuietNeighborhood = "QuietNeighborhood",
-}
+export const HIGHLIGHTS: Highlight[] = [
+  "HighSpeedInternetAccess",
+  "WasherDryer",
+  "AirConditioning",
+  "Heating",
+  "SmokeFree",
+  "CableReady",
+  "SatelliteTV",
+  "DoubleVanities",
+  "TubShower",
+  "Intercom",
+  "SprinklerSystem",
+  "RecentlyRenovated",
+  "CloseToTransit",
+  "GreatView",
+  "QuietNeighborhood",
+];
 
-export const HighlightIcons: Record<HighlightEnum, LucideIcon> = {
+export const HighlightIcons: Record<Highlight, LucideIcon> = {
   HighSpeedInternetAccess: Wifi,
-  WasherDryer: Waves,
-  AirConditioning: Thermometer,
-  Heating: Thermometer,
-  SmokeFree: Cigarette,
+  WasherDryer: WashingMachine,
+  AirConditioning: Snowflake,
+  Heating: Flame,
+  SmokeFree: CigaretteOff,
   CableReady: Cable,
   SatelliteTV: Tv,
   DoubleVanities: Maximize,
@@ -92,45 +99,49 @@ export const HighlightIcons: Record<HighlightEnum, LucideIcon> = {
   QuietNeighborhood: VolumeX,
 };
 
-export enum PropertyTypeEnum {
-  Rooms = "Rooms",
-  Tinyhouse = "Tinyhouse",
-  Apartment = "Apartment",
-  Villa = "Villa",
-  Townhouse = "Townhouse",
-  Cottage = "Cottage",
-}
+export const PROPERTY_TYPES: PropertyType[] = [
+  "Apartment",
+  "Townhouse",
+  "Villa",
+  "Cottage",
+  "Tinyhouse",
+  "Rooms",
+];
 
-export const PropertyTypeIcons: Record<PropertyTypeEnum, LucideIcon> = {
+export const PropertyTypeIcons: Record<PropertyType, LucideIcon> = {
   Rooms: Home,
   Tinyhouse: Warehouse,
-  Apartment: Building,
+  Apartment: Building2,
   Villa: Castle,
   Townhouse: Home,
   Cottage: Trees,
 };
 
-// Add this constant at the end of the file
-export const NAVBAR_HEIGHT = 52; // in pixels
-
-// Test users for development
-export const testUsers = {
-  tenant: {
-    username: "Carol White",
-    userId: "us-east-2:76543210-90ab-cdef-1234-567890abcdef",
-    signInDetails: {
-      loginId: "carol.white@example.com",
-      authFlowType: "USER_SRP_AUTH",
-    },
-  },
-  tenantRole: "tenant",
-  manager: {
-    username: "John Smith",
-    userId: "us-east-2:12345678-90ab-cdef-1234-567890abcdef",
-    signInDetails: {
-      loginId: "john.smith@example.com",
-      authFlowType: "USER_SRP_AUTH",
-    },
-  },
-  managerRole: "manager",
+export const PropertyTypeLabels: Record<PropertyType, string> = {
+  Rooms: "Studio / Room",
+  Tinyhouse: "Tiny house",
+  Apartment: "Apartment",
+  Villa: "Villa",
+  Townhouse: "Townhouse",
+  Cottage: "Cottage",
 };
+
+export const NAVBAR_HEIGHT = 64; // px
+
+/** Quick-fill accounts shown on the sign-in page in mock mode. */
+export const DEMO_ACCOUNTS = [
+  {
+    role: "tenant" as const,
+    label: "Tenant",
+    name: "Carol White",
+    email: "carol@rentiful.dev",
+    description: "Browse listings, save favorites, apply and track a lease.",
+  },
+  {
+    role: "manager" as const,
+    label: "Manager",
+    name: "John Smith",
+    email: "john@rentiful.dev",
+    description: "Manage 8 Los Angeles listings, review applications and tenants.",
+  },
+];

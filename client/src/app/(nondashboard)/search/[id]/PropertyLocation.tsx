@@ -1,81 +1,47 @@
-import { useGetPropertyQuery } from "@/state/api";
+"use client";
+
+import dynamic from "next/dynamic";
 import { Compass, MapPin } from "lucide-react";
-import mapboxgl from "mapbox-gl";
-import "mapbox-gl/dist/mapbox-gl.css";
-import React, { useEffect, useRef } from "react";
+import { Button } from "@/components/ui/button";
+import type { Property } from "@/types/models";
 
-mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN as string;
+const SingleMarkerMap = dynamic(() => import("./SingleMarkerMap"), {
+  ssr: false,
+  loading: () => <div className="h-full w-full animate-pulse bg-sand-200" />,
+});
 
-const PropertyLocation = ({ propertyId }: PropertyDetailsProps) => {
-  const {
-    data: property,
-    isError,
-    isLoading,
-  } = useGetPropertyQuery(propertyId);
-  const mapContainerRef = useRef(null);
-
-  useEffect(() => {
-    if (isLoading || isError || !property) return;
-
-    const map = new mapboxgl.Map({
-      container: mapContainerRef.current!,
-      style: "mapbox://styles/majesticglue/cm6u301pq008b01sl7yk1cnvb",
-      center: [
-        property.location.coordinates.longitude,
-        property.location.coordinates.latitude,
-      ],
-      zoom: 14,
-    });
-
-    const marker = new mapboxgl.Marker()
-      .setLngLat([
-        property.location.coordinates.longitude,
-        property.location.coordinates.latitude,
-      ])
-      .addTo(map);
-
-    const markerElement = marker.getElement();
-    const path = markerElement.querySelector("path[fill='#3FB1CE']");
-    if (path) path.setAttribute("fill", "#000000");
-
-    return () => map.remove();
-  }, [property, isError, isLoading]);
-
-  if (isLoading) return <>Loading...</>;
-  if (isError || !property) {
-    return <>Property not Found</>;
-  }
+const PropertyLocation = ({ property }: { property: Property }) => {
+  const { address, city, state, postalCode, coordinates } = property.location;
+  const fullAddress = `${address}, ${city}, ${state} ${postalCode}`;
 
   return (
-    <div className="py-16">
-      <h3 className="text-xl font-semibold text-primary-800 dark:text-primary-100">
-        Map and Location
-      </h3>
-      <div className="flex justify-between items-center text-sm text-primary-500 mt-2">
-        <div className="flex items-center text-gray-500">
-          <MapPin className="w-4 h-4 mr-1 text-gray-700" />
-          Property Address:
-          <span className="ml-2 font-semibold text-gray-700">
-            {property.location?.address || "Address not available"}
-          </span>
+    <section>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h2 className="text-lg font-semibold text-ink">Location</h2>
+          <p className="mt-1 flex items-center gap-1.5 text-sm text-ink-muted">
+            <MapPin className="h-4 w-4 text-ink-faint" />
+            {fullAddress}
+          </p>
         </div>
-        <a
-          href={`https://maps.google.com/?q=${encodeURIComponent(
-            property.location?.address || "",
-          )}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex justify-between items-center hover:underline gap-2 text-primary-600"
-        >
-          <Compass className="w-5 h-5" />
-          Get Directions
-        </a>
+        <Button asChild variant="outline" size="sm">
+          <a
+            href={`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(fullAddress)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Compass /> Get directions
+          </a>
+        </Button>
       </div>
-      <div
-        className="relative mt-4 h-[300px] rounded-lg overflow-hidden"
-        ref={mapContainerRef}
-      />
-    </div>
+      <div className="mt-4 h-[320px] overflow-hidden rounded-2xl border border-sand-200 shadow-card">
+        <SingleMarkerMap
+          latitude={coordinates.latitude}
+          longitude={coordinates.longitude}
+          label={property.name}
+        />
+      </div>
+    </section>
   );
 };
 

@@ -1,0 +1,335 @@
+[
+  {
+    "id": 1,
+    "amountDue": 2780,
+    "amountPaid": 2780,
+    "dueDate": "2026-01-01T00:00:00.000Z",
+    "paymentDate": "2026-01-04T00:00:00.000Z",
+    "paymentStatus": "Paid",
+    "leaseId": 1
+  },
+  {
+    "id": 2,
+    "amountDue": 2780,
+    "amountPaid": 2780,
+    "dueDate": "2026-02-01T00:00:00.000Z",
+    "paymentDate": "2026-02-03T00:00:00.000Z",
+    "paymentStatus": "Paid",
+    "leaseId": 1
+  },
+  {
+    "id": 3,
+    "amountDue": 2780,
+    "amountPaid": 2780,
+    "dueDate": "2026-03-01T00:00:00.000Z",
+    "paymentDate": "2026-03-02T00:00:00.000Z",
+    "paymentStatus": "Paid",
+    "leaseId": 1
+  },
+  {
+    "id": 4,
+    "amountDue": 2780,
+    "amountPaid": 2780,
+    "dueDate": "2026-04-01T00:00:00.000Z",
+    "paymentDate": "2026-04-01T00:00:00.000Z",
+    "paymentStatus": "Paid",
+    "leaseId": 1
+  },
+  {
+    "id": 5,
+    "amountDue": 2780,
+    "amountPaid": 2780,
+    "dueDate": "2026-05-01T00:00:00.000Z",
+    "paymentDate": "2026-05-04T00:00:00.000Z",
+    "paymentStatus": "Paid",
+    "leaseId": 1
+  },
+  {
+    "id": 6,
+    "amountDue": 2780,
+    "amountPaid": 2780,
+    "dueDate": "2026-06-01T00:00:00.000Z",
+    "paymentDate": "2026-06-03T00:00:00.000Z",
+    "paymentStatus": "Paid",
+    "leaseId": 1
+  },
+  {
+    "id": 7,
+    "amountDue": 2780,
+    "amountPaid": 2780,
+    "dueDate": "2026-07-01T00:00:00.000Z",
+    "paymentDate": "2026-07-02T00:00:00.000Z",
+    "paymentStatus": "Paid",
+    "leaseId": 1
+  },
+  {
+    "id": 8,
+    "amountDue": 2780,
+    "amountPaid": 2780,
+    "dueDate": "2026-08-01T00:00:00.000Z",
+    "paymentDate": "2026-08-01T00:00:00.000Z",
+    "paymentStatus": "Paid",
+    "leaseId": 1
+  },
+  {
+    "id": 9,
+    "amountDue": 2780,
+    "amountPaid": 2780,
+    "dueDate": "2026-09-01T00:00:00.000Z",
+    "paymentDate": "2026-09-04T00:00:00.000Z",
+    "paymentStatus": "Paid",
+    "leaseId": 1
+  },
+  {
+    "id": 10,
+    "amountDue": 3450,
+    "amountPaid": 3450,
+    "dueDate": "2025-11-01T00:00:00.000Z",
+    "paymentDate": "2025-11-03T00:00:00.000Z",
+    "paymentStatus": "Paid",
+    "leaseId": 2
+  },
+  {
+    "id": 11,
+    "amountDue": 3450,
+    "amountPaid": 3450,
+    "dueDate": "2025-12-01T00:00:00.000Z",
+    "paymentDate": "2025-12-02T00:00:00.000Z",
+    "paymentStatus": "Paid",
+    "leaseId": 2
+  },
+  {
+    "id": 12,
+    "amountDue": 3450,
+    "amountPaid": 3450,
+    "dueDate": "2026-01-01T00:00:00.000Z",
+    "paymentDate": "2026-01-01T00:00:00.000Z",
+    "paymentStatus": "Paid",
+    "leaseId": 2
+  },
+  {
+    "id": 13,
+    "amountDue": 3450,
+    "amountPaid": 3450,
+    "dueDate": "2026-02-01T00:00:00.000Z",
+    "paymentDate": "2026-02-04T00:00:00.000Z",
+    "paymentStatus": "Paid",
+    "leaseId": 2
+  },
+  {
+    "id": 14,
+    "amountDue": 3450,
+    "amountPaid": 3450,
+    "dueDate": "2026-03-01T00:00:00.000Z",
+    "paymentDate": "2026-03-03T00:00:00.000Z",
+    "paymentStatus": "Paid",
+    "leaseId": 2
+  },
+  {
+    "id": 15,
+    "amountDue": 3450,
+    "amountPaid": 3450,
+    "dueDate": "2026-04-01T00:00:00.000Z",
+    "paymentDate": "2026-04-02T00:00:00.000Z",
+    "paymentStatus": "Paid",
+    "leaseId": 2
+  },
+  {
+    "id": 16,
+    "amountDue": 3450,
+    "amountPaid": 2070,
+    "dueDate": "2026-05-01T00:00:00.000Z",
+    "paymentDate": "2026-05-01T00:00:00.000Z",
+    "paymentStatus": "PartiallyPaid",
+    "leaseId": 2
+  },
+  {
+    "id": 17,
+    "amountDue": 3450,
+    "amountPaid": 3450,
+    "dueDate": "2026-06-01T00:00:00.000Z",
+    "paymentDate": "2026-06-04T00:00:00.000Z",
+    "paymentStatus": "Paid",
+    "leaseId": 2
+  },
+  {
+    "id": 18,
+    "amountDue": 3450,
+    "amountPaid": 3450,
+    "dueDate": "2026-07-01T00:00:00.000Z",
+    "paymentDate": "2026-07-03T00:00:00.000Z",
+    "paymentStatus": "Paid",
+    "leaseId": 2
+  },
+  {
+    "id": 19,
+    "amountDue": 3450,
+    "amountPaid": 3450,
+    "dueDate": "2026-08-01T00:00:00.000Z",
+    "paymentDate": "2026-08-02T00:00:00.000Z",
+    "paymentStatus": "Paid",
+    "leaseId": 2
+  },
+  {
+    "id": 20,
+    "amountDue": 3450,
+    "amountPaid": 0,
+    "dueDate": "2026-09-01T00:00:00.000Z",
+    "paymentDate": "2026-09-01T00:00:00.000Z",
+    "paymentStatus": "Pending",
+    "leaseId": 2
+  },
+  {
+    "id": 21,
+    "amountDue": 6200,
+    "amountPaid": 6200,
+    "dueDate": "2026-03-01T00:00:00.000Z",
+    "paymentDate": "2026-03-04T00:00:00.000Z",
+    "paymentStatus": "Paid",
+    "leaseId": 3
+  },
+  {
+    "id": 22,
+    "amountDue": 6200,
+    "amountPaid": 6200,
+    "dueDate": "2026-04-01T00:00:00.000Z",
+    "paymentDate": "2026-04-03T00:00:00.000Z",
+    "paymentStatus": "Paid",
+    "leaseId": 3
+  },
+  {
+    "id": 23,
+    "amountDue": 6200,
+    "amountPaid": 6200,
+    "dueDate": "2026-05-01T00:00:00.000Z",
+    "paymentDate": "2026-05-02T00:00:00.000Z",
+    "paymentStatus": "Paid",
+    "leaseId": 3
+  },
+  {
+    "id": 24,
+    "amountDue": 6200,
+    "amountPaid": 6200,
+    "dueDate": "2026-06-01T00:00:00.000Z",
+    "paymentDate": "2026-06-01T00:00:00.000Z",
+    "paymentStatus": "Paid",
+    "leaseId": 3
+  },
+  {
+    "id": 25,
+    "amountDue": 6200,
+    "amountPaid": 6200,
+    "dueDate": "2026-07-01T00:00:00.000Z",
+    "paymentDate": "2026-07-04T00:00:00.000Z",
+    "paymentStatus": "Paid",
+    "leaseId": 3
+  },
+  {
+    "id": 26,
+    "amountDue": 6200,
+    "amountPaid": 6200,
+    "dueDate": "2026-08-01T00:00:00.000Z",
+    "paymentDate": "2026-08-03T00:00:00.000Z",
+    "paymentStatus": "Paid",
+    "leaseId": 3
+  },
+  {
+    "id": 27,
+    "amountDue": 6200,
+    "amountPaid": 0,
+    "dueDate": "2026-09-01T00:00:00.000Z",
+    "paymentDate": "2026-09-01T00:00:00.000Z",
+    "paymentStatus": "Overdue",
+    "leaseId": 3
+  },
+  {
+    "id": 28,
+    "amountDue": 2950,
+    "amountPaid": 2950,
+    "dueDate": "2026-06-01T00:00:00.000Z",
+    "paymentDate": "2026-06-01T00:00:00.000Z",
+    "paymentStatus": "Paid",
+    "leaseId": 4
+  },
+  {
+    "id": 29,
+    "amountDue": 2950,
+    "amountPaid": 2950,
+    "dueDate": "2026-07-01T00:00:00.000Z",
+    "paymentDate": "2026-07-04T00:00:00.000Z",
+    "paymentStatus": "Paid",
+    "leaseId": 4
+  },
+  {
+    "id": 30,
+    "amountDue": 2950,
+    "amountPaid": 2950,
+    "dueDate": "2026-08-01T00:00:00.000Z",
+    "paymentDate": "2026-08-03T00:00:00.000Z",
+    "paymentStatus": "Paid",
+    "leaseId": 4
+  },
+  {
+    "id": 31,
+    "amountDue": 2950,
+    "amountPaid": 0,
+    "dueDate": "2026-09-01T00:00:00.000Z",
+    "paymentDate": "2026-09-01T00:00:00.000Z",
+    "paymentStatus": "Pending",
+    "leaseId": 4
+  },
+  {
+    "id": 32,
+    "amountDue": 4850,
+    "amountPaid": 4850,
+    "dueDate": "2026-04-01T00:00:00.000Z",
+    "paymentDate": "2026-04-01T00:00:00.000Z",
+    "paymentStatus": "Paid",
+    "leaseId": 5
+  },
+  {
+    "id": 33,
+    "amountDue": 4850,
+    "amountPaid": 4850,
+    "dueDate": "2026-05-01T00:00:00.000Z",
+    "paymentDate": "2026-05-04T00:00:00.000Z",
+    "paymentStatus": "Paid",
+    "leaseId": 5
+  },
+  {
+    "id": 34,
+    "amountDue": 4850,
+    "amountPaid": 4850,
+    "dueDate": "2026-06-01T00:00:00.000Z",
+    "paymentDate": "2026-06-03T00:00:00.000Z",
+    "paymentStatus": "Paid",
+    "leaseId": 5
+  },
+  {
+    "id": 35,
+    "amountDue": 4850,
+    "amountPaid": 4850,
+    "dueDate": "2026-07-01T00:00:00.000Z",
+    "paymentDate": "2026-07-02T00:00:00.000Z",
+    "paymentStatus": "Paid",
+    "leaseId": 5
+  },
+  {
+    "id": 36,
+    "amountDue": 4850,
+    "amountPaid": 4850,
+    "dueDate": "2026-08-01T00:00:00.000Z",
+    "paymentDate": "2026-08-01T00:00:00.000Z",
+    "paymentStatus": "Paid",
+    "leaseId": 5
+  },
+  {
+    "id": 37,
+    "amountDue": 4850,
+    "amountPaid": 0,
+    "dueDate": "2026-09-01T00:00:00.000Z",
+    "paymentDate": "2026-09-01T00:00:00.000Z",
+    "paymentStatus": "Pending",
+    "leaseId": 5
+  }
+]

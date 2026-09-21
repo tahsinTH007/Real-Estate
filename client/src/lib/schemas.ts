@@ -1,23 +1,25 @@
 import * as z from "zod";
-import { PropertyTypeEnum } from "./constants";
+import { AMENITIES, HIGHLIGHTS, PROPERTY_TYPES } from "./constants";
 
 export const propertySchema = z.object({
   name: z.string().min(1, "Name is required"),
-  description: z.string().min(1, "Description is required"),
-  pricePerMonth: z.coerce.number().positive().min(0).int(),
-  securityDeposit: z.coerce.number().positive().min(0).int(),
-  applicationFee: z.coerce.number().positive().min(0).int(),
+  description: z.string().min(20, "Tell renters a little more (20+ characters)"),
+  pricePerMonth: z.coerce.number().int().positive("Enter a monthly rent"),
+  securityDeposit: z.coerce.number().int().min(0),
+  applicationFee: z.coerce.number().int().min(0),
   isPetsAllowed: z.boolean(),
   isParkingIncluded: z.boolean(),
   photoUrls: z
     .array(z.instanceof(File))
-    .min(1, "At least one photo is required"),
-  amenities: z.string().min(1, "Amenities are required"),
-  highlights: z.string().min(1, "Highlights are required"),
-  beds: z.coerce.number().positive().min(0).max(10).int(),
-  baths: z.coerce.number().positive().min(0).max(10).int(),
-  squareFeet: z.coerce.number().int().positive(),
-  propertyType: z.nativeEnum(PropertyTypeEnum),
+    .min(1, "Add at least one photo"),
+  amenities: z.array(z.enum(AMENITIES as [string, ...string[]])).min(1, "Pick at least one amenity"),
+  highlights: z.array(z.enum(HIGHLIGHTS as [string, ...string[]])).min(1, "Pick at least one highlight"),
+  beds: z.coerce.number().int().min(0).max(10),
+  baths: z.coerce.number().min(0.5).max(10),
+  squareFeet: z.coerce.number().int().positive("Enter the size"),
+  propertyType: z.enum(PROPERTY_TYPES as [string, ...string[]], {
+    errorMap: () => ({ message: "Choose a property type" }),
+  }),
   address: z.string().min(1, "Address is required"),
   city: z.string().min(1, "City is required"),
   state: z.string().min(1, "State is required"),
@@ -43,3 +45,25 @@ export const settingsSchema = z.object({
 });
 
 export type SettingsFormData = z.infer<typeof settingsSchema>;
+
+export const signInSchema = z.object({
+  email: z.string().email("Enter a valid email"),
+  password: z.string().min(1, "Enter your password"),
+});
+
+export type SignInFormData = z.infer<typeof signInSchema>;
+
+export const signUpSchema = z
+  .object({
+    username: z.string().min(2, "Enter your name"),
+    email: z.string().email("Enter a valid email"),
+    password: z.string().min(8, "Use at least 8 characters"),
+    confirmPassword: z.string(),
+    role: z.enum(["tenant", "manager"]),
+  })
+  .refine((d) => d.password === d.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
+
+export type SignUpFormData = z.infer<typeof signUpSchema>;

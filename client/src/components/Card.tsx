@@ -1,130 +1,135 @@
-import { Bath, Bed, Heart, House, Star } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-import React, { useState } from "react";
+"use client";
 
-interface CardProps {
-  property: {
-    id: string;
-    name: string;
-    photoUrls?: string[];
-    location: {
-      address: string;
-      city: string;
-    };
-    averageRating: number;
-    numberOfReviews: number;
-    pricePerMonth: number;
-    beds: number;
-    baths: number;
-    squareFeet: number;
-    isPetsAllowed: boolean;
-    isParkingIncluded: boolean;
-  };
-  isFavorite: boolean;
-  onFavoriteToggle: () => void;
+import Link from "next/link";
+import { Bath, BedDouble, Ruler, Star } from "lucide-react";
+import FavoriteButton from "@/components/FavoriteButton";
+import PropertyImage from "@/components/PropertyImage";
+import { Badge } from "@/components/ui/badge";
+import { PropertyTypeLabels } from "@/lib/constants";
+import { bedsLabel, cn, formatCurrency } from "@/lib/utils";
+import type { Property } from "@/types/models";
+
+export interface CardProps {
+  property: Property;
+  isFavorite?: boolean;
+  onFavoriteToggle?: () => void;
   showFavoriteButton?: boolean;
   propertyLink?: string;
+  /** Extra badge shown on the photo, e.g. "Active lease". */
+  badge?: React.ReactNode;
+  footer?: React.ReactNode;
+  className?: string;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
+  active?: boolean;
 }
+
+export const isNewListing = (postedDate: string) =>
+  Date.now() - new Date(postedDate).getTime() < 14 * 24 * 60 * 60 * 1000;
 
 const Card = ({
   property,
-  isFavorite,
+  isFavorite = false,
   onFavoriteToggle,
   showFavoriteButton = true,
   propertyLink,
+  badge,
+  footer,
+  className,
+  onMouseEnter,
+  onMouseLeave,
+  active = false,
 }: CardProps) => {
-  const [imgSrc, setImgSrc] = useState(
-    property.photoUrls?.[0] || "/placeholder.jpg",
-  );
+  const Wrapper = propertyLink ? Link : "div";
+  const wrapperProps = propertyLink ? { href: propertyLink, scroll: true } : {};
 
   return (
-    <div className="bg-white rounded-xl overflow-hidden shadow-lg w-full mb-5">
-      <div className="relative">
-        <div className="w-full h-48 relative">
-          <Image
-            src={imgSrc}
+    <article
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      className={cn(
+        "group surface flex flex-col overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover",
+        active && "ring-2 ring-brand-500 ring-offset-2",
+        className,
+      )}
+    >
+      <Wrapper {...(wrapperProps as { href: string })} className="relative block">
+        <div className="relative aspect-[4/3] w-full overflow-hidden bg-sand-100">
+          <PropertyImage
+            src={property.photoUrls?.[0]}
             alt={property.name}
             fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            onError={() => setImgSrc("/placeholder.jpg")}
+            className="object-cover transition-transform duration-700 group-hover:scale-105"
+            sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
           />
+          <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-ink/40 to-transparent" />
         </div>
-        <div className="absolute bottom-4 left-4 flex gap-2">
-          {property.isPetsAllowed && (
-            <span className="bg-white/80 text-black text-xs font-semibold px-2 py-1 rounded-full">
-              Pets Allowed
-            </span>
+
+        <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
+          <Badge variant="glass">{PropertyTypeLabels[property.propertyType]}</Badge>
+          {isNewListing(property.postedDate) && (
+            <Badge className="bg-accent-400 text-ink">New</Badge>
           )}
-          {property.isParkingIncluded && (
-            <span className="bg-white/80 text-black text-xs font-semibold px-2 py-1 rounded-full">
-              Parking Included
-            </span>
-          )}
+          {badge}
         </div>
-        {showFavoriteButton && (
-          <button
-            className="absolute bottom-4 right-4 bg-white hover:bg-white/90 rounded-full p-2 cursor-pointer"
-            onClick={onFavoriteToggle}
-          >
-            <Heart
-              className={`w-5 h-5 ${
-                isFavorite ? "text-red-500 fill-red-500" : "text-gray-600"
-              }`}
-            />
-          </button>
-        )}
-      </div>
-      <div className="p-4">
-        <h2 className="text-xl font-bold mb-1">
-          {propertyLink ? (
-            <Link
-              href={propertyLink}
-              className="hover:underline hover:text-blue-600"
-              scroll={false}
-            >
-              {property.name}
-            </Link>
-          ) : (
-            property.name
-          )}
-        </h2>
-        <p className="text-gray-600 mb-2">
-          {property?.location?.address}, {property?.location?.city}
-        </p>
-        <div className="flex justify-between items-center">
-          <div className="flex items-center mb-2">
-            <Star className="w-4 h-4 text-yellow-400 mr-1" />
-            <span className="font-semibold">
+
+        <div className="absolute bottom-3 left-3 rounded-full bg-white/95 px-3 py-1 text-sm font-semibold text-ink shadow-sm backdrop-blur">
+          {formatCurrency(property.pricePerMonth)}
+          <span className="text-xs font-normal text-ink-soft"> /mo</span>
+        </div>
+      </Wrapper>
+
+      {showFavoriteButton && onFavoriteToggle && (
+        <FavoriteButton
+          isFavorite={isFavorite}
+          onToggle={onFavoriteToggle}
+          className="absolute right-3 top-3"
+        />
+      )}
+
+      <div className="flex flex-1 flex-col p-4">
+        <div className="flex items-start justify-between gap-3">
+          <h3 className="line-clamp-1 text-base font-semibold text-ink">
+            {propertyLink ? (
+              <Link href={propertyLink} className="hover:text-brand-700">
+                {property.name}
+              </Link>
+            ) : (
+              property.name
+            )}
+          </h3>
+          {!!property.averageRating && (
+            <span className="flex shrink-0 items-center gap-1 text-xs font-semibold text-ink">
+              <Star className="h-3.5 w-3.5 fill-accent-400 text-accent-400" />
               {property.averageRating.toFixed(1)}
+              <span className="font-normal text-ink-faint">
+                ({property.numberOfReviews ?? 0})
+              </span>
             </span>
-            <span className="text-gray-600 ml-1">
-              ({property.numberOfReviews} Reviews)
-            </span>
-          </div>
-          <p className="text-lg font-bold mb-3">
-            ${property.pricePerMonth.toFixed(0)}{" "}
-            <span className="text-gray-600 text-base font-normal"> /month</span>
-          </p>
+          )}
         </div>
-        <hr />
-        <div className="flex justify-between items-center gap-4 text-gray-600 mt-5">
-          <span className="flex items-center">
-            <Bed className="w-5 h-5 mr-2" />
-            {property.beds} Bed
+        <p className="mt-1 line-clamp-1 text-sm text-ink-soft">
+          {property.location?.address}, {property.location?.city}
+        </p>
+
+        <div className="mt-3 flex items-center gap-4 text-xs font-medium text-ink-muted">
+          <span className="flex items-center gap-1.5">
+            <BedDouble className="h-4 w-4 text-ink-faint" />
+            {bedsLabel(property.beds)}
           </span>
-          <span className="flex items-center">
-            <Bath className="w-5 h-5 mr-2" />
-            {property.baths} Bath
+          <span className="flex items-center gap-1.5">
+            <Bath className="h-4 w-4 text-ink-faint" />
+            {property.baths} {property.baths === 1 ? "bath" : "baths"}
           </span>
-          <span className="flex items-center">
-            <House className="w-5 h-5 mr-2" />
-            {property.squareFeet} sq ft
+          <span className="flex items-center gap-1.5">
+            <Ruler className="h-4 w-4 text-ink-faint" />
+            {property.squareFeet.toLocaleString()} sq ft
           </span>
         </div>
+
+        {footer && <div className="mt-4 border-t border-sand-200 pt-4">{footer}</div>}
       </div>
-    </div>
+    </article>
   );
 };
 

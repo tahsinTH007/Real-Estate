@@ -1,13 +1,23 @@
+import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
-import Landing from "./(nondashboard)/landing/page";
+import CallToActionSection from "@/components/landing/CallToActionSection";
+import FeaturedListings from "@/components/landing/FeaturedListings";
+import FeaturesSection from "@/components/landing/FeaturesSection";
+import HeroSection from "@/components/landing/HeroSection";
+import HowItWorksSection from "@/components/landing/HowItWorksSection";
 
 export default function Home() {
   return (
-    <div className="h-full w-full">
-      <Navbar />
-      <main className={`h-full flex w-full flex-col`}>
-        <Landing />
+    <div className="min-h-screen bg-background">
+      <Navbar variant="transparent" />
+      <main>
+        <HeroSection />
+        <FeaturedListings />
+        <FeaturesSection />
+        <HowItWorksSection />
+        <CallToActionSection />
       </main>
+      <Footer />
     </div>
   );
 }
